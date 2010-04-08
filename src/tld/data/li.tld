@@ -1,0 +1,13 @@
+# Copyright (C) 2003-2004 Thomas Jacob, Internet24.de
+
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice, this notice and the source URL list below are preserved.
+
+# See http://www.switch.ch/id/idn/chars.html
+
+version "1.0"
+tld li
+
+include templates/latin_1_supplement_letters
+

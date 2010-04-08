@@ -1,0 +1,17 @@
+# Copyright (C) 2004 Jørgen Thomsen, Roskilde, Denmark
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
+
+version "1.0"
+tld se
+
+# Variant table for the Swedish domain names
+# According to http://www.nic-se.se/english/projekt/idn.shtml?lang=en
+
+U+00E4 # ä A WITH DIAERESIS, LATIN SMALL LETTER
+U+00E5 # å A WITH RING ABOVE, LATIN SMALL LETTER
+U+00E9 # é LATIN SMALL LETTER E WITH ACUTE
+U+00F6 # ö LATIN SMALL LETTER O WITH DIAERESIS
+U+00FC # ü LATIN SMALL LETTER U WITH DIAERESIS
+

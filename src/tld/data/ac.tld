@@ -1,0 +1,15 @@
+# Copyright (C) 2003-2005 Thomas Jacob, Internet24.de
+
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice, this notice and the source URL list below are preserved.
+
+# Thanks to David Clark of ICB for providing this data.
+
+# See http://www.nic.ac/AC-IDN-Policy.pdf
+
+version "1.0"
+tld ac
+
+include templates/latin_1_supplement_letters
+include templates/latin_extended_a_letters_icb

@@ -1,0 +1,75 @@
+# Copyright (C) 2003-2005 Thomas Jacob, Internet24.de
+
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice, this notice and the source URL list below are preserved.
+
+# Subset of Latin Extended-A code points that can be registered
+# under the .ac/io/tm/sh TLDs run by ICB PLC
+
+# See
+#
+# .AC     www.nic.ac      http://www.nic.ac/AC-IDN-Policy.pdf
+# .IO     www.nic.io      http://www.nic.io/IO-IDN-Policy.pdf
+# .SH     www.nic.sh      http://www.nic.sh/SH-IDN-Policy.pdf
+# .TM     www.nic.tm      http://www.nic.tm/TM-IDN-Policy.pdf
+
+# See also http://www.unicode.org/charts/PDF/U0100.pdf
+
+# Thanks to David Clark of ICB for providing this data.
+
+version "1.0"
+
+U+0101 # Latin latter A with macron
+U+0103 # Latin letter A with breve
+U+0105 # Latin letter A with ogonek
+U+0107 # Latin letter C with acute
+U+0109 # Latin letter C with circumflex
+U+010B # Latin letter C with dot above
+U+010D # Latin letter C with caron
+U+010F # Latin letter D with caron
+U+0111 # Latin letter D with stroke
+U+0113 # Latin letter E with macron
+U+0117 # Latin letter E with dot above
+U+0119 # Latin letter E with ogonek
+U+011B # Latin letter E with caron
+U+011D # Latin letter G with circumflex
+U+0121 # Latin letter G with dot above
+U+0123 # Latin letter G with cedilla
+U+0125 # Latin letter H with circumflex
+U+0127 # Latin letter H with stroke
+U+012B # Latin letter I with macron
+U+012F # Latin letter I with ogonek
+U+0135 # Latin letter J with circumflex
+U+0137 # Latin letter K with cedilla
+U+013A # Latin letter L with acute
+U+013C # Latin letter L with cedilla
+U+013E # Latin letter L with caron
+U+0140 # Latin letter L with middle dot
+U+0142 # Latin letter L with stroke
+U+0144 # Latin letter N with acute
+U+0146 # Latin letter N with cedilla
+U+0148 # Latin letter N with caron
+U+014B # Latin letter Eng
+U+0151 # Latin letter O with double acute
+U+0153 # Latin letter OE ligature
+U+0155 # Latin letter R with acute
+U+0157 # Latin letter R with cedilla
+U+0159 # Latin letter R with caron
+U+015B # Latin letter S with acute
+U+015D # Latin letter S with circumflex
+U+015F # Latin letter S with cedilla
+U+0161 # Latin letter S with caron
+U+0163 # Latin letter T with cedilla
+U+0165 # Latin letter T with caron
+U+0167 # Latin letter T with stroke
+U+016B # Latin letter U with macron
+U+016D # Latin letter U with breve
+U+016F # Latin letter U with ring above
+U+0171 # Latin letter U with double acute
+U+0173 # Latin letter U with ogonek
+U+0175 # Latin letter W with circumflex
+U+0177 # Latin letter Y with circumflex
+U+017A # Latin letter Z with acute
+U+017C # Latin letter Z with dot above
+U+017E # Latin letter Z with caron

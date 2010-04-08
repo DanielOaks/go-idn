@@ -1,0 +1,18 @@
+# Copyright (C) 2003-2004 Thomas Jacob, Internet24.de
+
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice, this notice and the source URL list below are preserved.
+
+# See http://www.nic.at/en/service/idn/iz_zeichentabelle.asp
+#  and http://www.nic.at/de/news/news/nw_news.asp?Key=688&Typ=100
+
+version "1.0"
+tld at
+
+include templates/latin_1_supplement_letters
+
+0x153
+0x161
+0x17E
+
