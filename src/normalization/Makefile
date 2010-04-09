@@ -4,7 +4,7 @@
 
 include $(GOROOT)/src/Make.$(GOARCH)
 
-TARG=unicode/normalization
+TARG=idn/normalization
 GOFILES=\
 	normalization.go\
 	tables.go\
