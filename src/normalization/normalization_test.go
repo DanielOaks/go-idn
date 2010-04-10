@@ -11,13 +11,13 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	"bufio"
-	"http"
-	"strconv"
 	"os"
-	"unicode"
 	"log"
 	"strings"
+	"unicode"
+	"http"
+	"strconv"
+	"bufio"//*/
 )
 
 var die = log.New(os.Stderr, nil, "", log.Lexit|log.Lshortfile)
@@ -105,6 +105,29 @@ type _nfkcTest struct {
 	C5 []int
 }
 
+
+func TestDecomposeHangul(t *testing.T) {
+	out := decomposeHangul(0xBA14)
+	want := []int {4358, 4451, 4539}
+	
+	if out[0] != want[0] || out[1] != want[1] || out[2] != want[2] {
+		t.Errorf("decomposeHangul(BA14) == %v; want %v", hex32(out), hex32(want))
+	}
+}
+/*
+func TestNKFC(t *testing.T) {
+	
+	var a []int = []int{0xBA14}
+
+	out := NFKC(a) 
+	
+	if(out[0] != a[0]) {
+		t.Errorf("NKFC(BA14) == %v; want BA14", hex32(out))
+	}
+}//*/
+
+
+
 // Downloads the NormalizationTest.txt from unicode.org and tests all rows as described in the file
 func TestNKFC(t *testing.T) {
 	resp, _, err:= http.Get("http://www.unicode.org/Public/"+ unicode.Version +"/ucd/NormalizationTest.txt")
@@ -126,7 +149,7 @@ func TestNKFC(t *testing.T) {
 			die.Log(err)
 		}
 		
-		if i == 5999 {
+		if i == 2000 {
 			break // 
 		}
 		
@@ -176,22 +199,22 @@ func TestNKFC(t *testing.T) {
 			}
 			
 			if !reflect.DeepEqual(test.C4, NFKC(test.C1)) {
-				t.Errorf("NormalizeNFCK(%v) == %v; want %v", hex32(test.C1), hex32(NFKC(test.C1)), hex32(test.C4))
+				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C1 - Line: %v", hex32(test.C1), hex32(NFKC(test.C1)), hex32(test.C4), i+1)
 			}
 			if !reflect.DeepEqual(test.C4, NFKC(test.C2)) {
-				t.Errorf("NormalizeNFCK(%v) == %v; want %v", hex32(test.C2), hex32(NFKC(test.C2)), hex32(test.C4))
+				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C2 - Line: %v", hex32(test.C2), hex32(NFKC(test.C2)), hex32(test.C4), i+1)
 			}
 			if !reflect.DeepEqual(test.C4, NFKC(test.C3)) {
-				t.Errorf("NormalizeNFCK(%v) == %v; want %v", hex32(test.C3), hex32(NFKC(test.C3)), hex32(test.C4))
+				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C3 - Line: %v", hex32(test.C3), hex32(NFKC(test.C3)), hex32(test.C4), i+1)
 			}
 			if !reflect.DeepEqual(test.C4, NFKC(test.C4)) {
-				t.Errorf("NormalizeNFCK(%v) == %v; want %v", hex32(test.C4), hex32(NFKC(test.C4)), hex32(test.C4))
+				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C4 - Line: %v", hex32(test.C4), hex32(NFKC(test.C4)), hex32(test.C4), i+1)
 			}
 			if !reflect.DeepEqual(test.C4, NFKC(test.C5)) {
-				t.Errorf("NormalizeNFCK(%v) == %v; want %v", hex32(test.C5), hex32(NFKC(test.C5)), hex32(test.C4))
+				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C5 - Line: %v", hex32(test.C5), hex32(NFKC(test.C5)), hex32(test.C4), i+1)
 			}
 		}	
 		
 	}
 	resp.Body.Close()
-}
+}//*/

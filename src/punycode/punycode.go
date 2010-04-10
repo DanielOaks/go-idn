@@ -43,13 +43,13 @@ const (
 	OVERFLOW  = "Overflow"
 )
 
-// ToASCII returns the Punycode encoding of the string input and a nil os.Error when successful.
+// ToASCII returns the Punycode encoding of the string input as a string and a nil os.Error when successful.
 func ToASCII(input string) (string, os.Error) {
 	runes := bytes.Runes([]byte(input))
 	return ToASCIIRunes(runes)
 }
 
-// ToUnicode returns the UTF-8 encoded string of the Punycode string input and a nil os.Error when successful.
+// ToUnicode returns the decoded Punycode string input as a UTF-8 encoded string and a nil os.Error when successful.
 func ToUnicode(input string) (string, os.Error) {
 	output, err := ToUnicodeRunes(input)
 	return stringify(output), err
@@ -166,7 +166,7 @@ func ToASCIIRunes(runes []int) (string, os.Error) {
 	return string(output[0:(len(output))]), nil
 }
 
-// ToUnicode returns the Unicode code point sequence of the Punycode sequence and a nil os.Error when successful.
+// ToUnicodeRunes returns the decoded rune sequence of the input string and a nil os.Error when successful.
 func ToUnicodeRunes(input string) ([]int, os.Error) {
 	var n int = INITIAL_N
 	var i int = 0
@@ -273,9 +273,9 @@ func isBasic(c int) bool {
 }
 
 
-/* codepoint2digit(cp) returns the numeric value of a basic code */
-/* point (for use in representing integers) in the range 0 to */
-/* base-1, or base if cp does not represent a value.          */
+// codepoint2digit(cp) returns the numeric value of a basic rune
+// (for use in representing integers) in the range 0 to 
+// base-1, or base if cp does not represent a value.          
 func codepoint2digit(cp int) (int, os.Error) {
 	if cp-48 < 10 {
 		// '0'..'9' : 26..35
@@ -296,7 +296,7 @@ func codepoint2digit(cp int) (int, os.Error) {
 
 }
 
-// Returns the unicode code point and a non-nil Error hwen d < 36.
+// Returns the rune and a non-nil Error hwen d < 36.
 // Else it returns (unicode.MaxRune + 1) and a BadInputError
 func digit2codepoint(d int) (int, os.Error) {
 

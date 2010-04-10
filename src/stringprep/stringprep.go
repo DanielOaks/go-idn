@@ -52,6 +52,28 @@ type ProfileElement struct {
 	Table Table
 }
 
+
+// Exports tables
+var Tables = map[string]Table {
+	"A1":_A1,
+	"B1":_B1,
+	"B2":_B2,
+	"B3":_B3,
+	"C11":_C11,
+	"C12":_C12,
+	"C21":_C21,
+	"C22":_C22,
+	"C3":_C3,
+	"C4":_C4,
+	"C5":_C5,
+	"C6":_C6,
+	"C7":_C7,
+	"C8":_C8,
+	"C9":_C9,
+	"D1":_D1,
+	"D2":_D2,
+}
+
 func Nameprep(label string) string {
 	return Stringprep(label, Profiles["nameprep"])
 }
@@ -82,8 +104,8 @@ func Stringprep(input string, profile Profile) string {
 	return stringify(StringprepRunes(input_runes, profile))
 }
 
-// Prepare the input UCS-4 string according to the stringprep profile,
-// and return the results.
+// Prepare the input rune array according to the stringprep profile,
+// and return the results as a rune array.
 func StringprepRunes(input []int, profile Profile) []int {
 	output := make([]int, len(input))
 	copy(output[0:], input[0:])
@@ -169,7 +191,7 @@ func StringprepRunes(input []int, profile Profile) []int {
 }
 
 
-// Returns true if code point is in table 
+// Returns true if the rune is in table 
 func in_table(c int, table Table) bool {
 	for i := 0; i < len(table); i++ {
 		if table[i].Lo <= c && c <= table[i].Hi {
@@ -194,6 +216,7 @@ func filter(input []int, table Table) []int {
 	return output[0:len(output)]
 }
 
+// Iterates over the input rune array and replaces runes with their maps
 func map_table(input []int, table Table) []int {
 
 	output := make([]int, len(input))

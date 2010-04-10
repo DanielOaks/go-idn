@@ -279,7 +279,7 @@ func decomposeHangul(s int) []int {
 	}
 	
 	var L int = LBase + SIndex / NCount
-	var V int = VBase + (SIndex & NCount) / TCount
+	var V int = VBase + (SIndex % NCount) / TCount
 	var T int = TBase + SIndex % TCount
 	
 	out := make([]int, 2, 3)
