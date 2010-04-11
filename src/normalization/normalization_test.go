@@ -14,14 +14,14 @@ import (
 	"os"
 	"log"
 	"strings"
-	"unicode"
+	//"unicode"
 	"http"
 	"strconv"
 	"bufio"//*/
 )
 
 var die = log.New(os.Stderr, nil, "", log.Lexit|log.Lshortfile)
-
+/*
 // Random samples from the decompose index
 var decomposeTests = [][]int {
     []int{0x00A0, 0},
@@ -47,7 +47,7 @@ func TestDecomposeIndex(t *testing.T) {
 			t.Errorf("decomposeIndex(%v) = %v; want %v", string(tt[0]), string(out), string(tt[1]))
 		}
 	}
-}
+}*/
 
 
 
@@ -130,7 +130,7 @@ func TestNKFC(t *testing.T) {
 
 // Downloads the NormalizationTest.txt from unicode.org and tests all rows as described in the file
 func TestNKFC(t *testing.T) {
-	resp, _, err:= http.Get("http://www.unicode.org/Public/"+ unicode.Version +"/ucd/NormalizationTest.txt")
+	resp, _, err:= http.Get("http://www.unicode.org/Public/5.2.0/ucd/NormalizationTest.txt")
 	
 		if err != nil {
 		die.Log(err)
@@ -149,7 +149,7 @@ func TestNKFC(t *testing.T) {
 			die.Log(err)
 		}
 		
-		if i == 2000 {
+		if i == 12500 {
 			break // 
 		}
 		

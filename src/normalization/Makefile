@@ -11,3 +11,16 @@ GOFILES=\
 	
 	
 include $(GOROOT)/src/Make.pkg
+
+maketables: maketables.go
+	$(GC) maketables.go
+	$(LD) -o maketables maketables.$O
+
+
+
+tables:	maketables
+	$(GC) maketables.go
+	$(LD) -o maketables maketables.$O
+	./maketables > tables2.go
+	gofmt -w tables2.go
+	rm -f maketables
