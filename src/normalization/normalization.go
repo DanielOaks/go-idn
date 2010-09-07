@@ -4,10 +4,13 @@
 
 // This file is part of go-idn
 
+// Unicode Normalization. 
+// Because Unicode contains a large number of precomposed characters
+// there are multiple ways a character can be represented.
 package normalization
 
 import (
-	"strconv"
+	//"strconv"
 	"fmt"
 )
 // Normalization Forms. At the moment only NFKC is supported.
@@ -28,9 +31,26 @@ func Normalize(input []int, form int) []int {
 }
 //*/
 
+
+type hex32 []int
+
+func (h hex32) Format(f fmt.State, c int) {
+	fmt.Fprint(f, "[")
+	for i, v := range h {
+		if i > 0 {
+			fmt.Fprint(f, " ")
+		}
+		fmt.Fprintf(f, "%x", v)
+	}
+	fmt.Fprint(f, "]")
+}
+
+
 // Applies NFKC normalization to an array of runes and returns a normalized rune array
 func NFKC(input []int) []int {
-
+	if len(input) == 0 {
+		return input
+	}
 	output := make([]int, 0, len(input))
 	
 	
@@ -51,22 +71,86 @@ func NFKC(input []int) []int {
 			}
 			
 		} else {
-			index := decomposeIndex(code)
-			fmt.Printf("index = " + strconv.Itob(index,  10)+ "\n ")
-			if index == -1 {
-				output = addCP(output, code)
-			} else {
-				// Append to output
-				hang := _DecompositionMappings[index]
-				for i:=0; i< len(hang); i++ {
-					output = addCP(output, hang[i])
+			// Decompose:
+			// Here we replace 'code' with the value in _Decomposition[code] if it exist
+			if mappings, ok := _Decomposition[code]; ok {
+				for i:=0; i<len(mappings); i++ {
+					output = addCP(output, mappings[i])
 				}
+			} else {
+				output = addCP(output, code)
 			}
 		}
 	}
 	
 	// Bring the string in to canonical order
 	output = canonicalOrdering(output)
+	
+	/*
+	lastClass := -1
+	starterPos := 0
+	sourceLength := len(output)
+	targetPos := 1
+	starterCh := output[0]
+	
+	for sourcePos :=1; sourcePos < sourceLength; sourcePos++ {
+		ch := output[sourcePos]
+		chClass := combiningClass(ch)
+		composite := compose(starterCh, ch)
+		if composite != -1 && lastClass < chClass {
+			output[starterPos] = composite
+			starterCh = composite
+		} else if chClass == 0 {
+			starterPos = targetPos
+			starterCh = ch
+			lastClass = -1
+			output[targetPos] = ch
+			targetPos = targetPos +1
+		} else {
+			lastClass = chClass
+			output[targetPos] = ch
+			targetPos = targetPos +1
+		}
+	}//*/
+	
+/*
+	lastClass := 0
+	starterPos := 0
+	//sourceLength := len(output)
+	//targetPos := 0
+	
+	
+	for i :=0; i < len(output); i++ {
+		chClass := combiningClass(output[i])
+		
+		if i > 0 && (lastClass == 0 || lastClass != chClass) {
+			composite := compose(output[starterPos], output[i])
+			if composite != -1 && lastClass < chClass {
+				output[starterPos] = composite
+				output = remove(output, starterPos)
+				
+				i--
+				
+				if starterPos == i {
+					lastClass = 0
+				} else {
+					lastClass = combiningClass(output[i-1])
+				}
+				continue
+			}
+		} else if(chClass == 0) {
+			//starterCh = output[i]
+			lastClass = 0
+		} 
+			lastClass = chClass
+		
+		
+	}//*/
+	
+	
+	
+	//fmt.Printf("output = %v\n", hex32(output))
+	
 	
 	// Do the canonical composition
 	last_cc := 0
@@ -75,7 +159,7 @@ func NFKC(input []int) []int {
 	for i:=0; i < len(output); i++ {
 		cc := combiningClass(output[i])
 		
-		if i > 0 && (last_cc == 0 || last_cc != cc) {
+		if i > 0 && (last_cc == 0 || last_cc < cc) {
 			// try to combine characters 
 			a := output[last_start]
 			b := output[i]
@@ -85,6 +169,7 @@ func NFKC(input []int) []int {
 			if c != -1 {
 				output[last_start] = c
 				output = remove(output, i)
+				
 				
 				i--
 				
@@ -103,60 +188,66 @@ func NFKC(input []int) []int {
 		
 		last_cc = cc
 		
-	}
-	return output
-}
-
-
-		
-
-// Returns the index of a rune inside the decomposition table if fount, -1 otherwise.
-// Implemented using a binary search.
-func decomposeIndex(c int) int {
-	start := 0
-	end := len(_DecompositionKeys) / 2
+	}//*/
 	
-	for { // ever 
-		half := (start + end) / 2
-		code := _DecompositionKeys[half * 2]
-		
-		if c == code {
-			return _DecompositionKeys[half *2 +1]
-		}
-		if half == start {
-			// character not found
-			return -1
-		} else if c > code {
-			start = half
-		} else {
-			end = half
-		}
-	}
-	return -1
+	return output//[0:targetPos-1]
 }
 
-		
+
+func canonicalOrdering(input []int) []int {
+	if len(input) <= 1 {
+		return input
+	}
+	
+	temp := 0
+	ccHere := 0
+	ccPrev := 0 
+	
+	for i:=1; i<len(input); i++ {
+		ccHere = combiningClass(input[i])
+		ccPrev = combiningClass(input[i-1])
+
+		if ccHere != 0 && ccPrev > ccHere {
+			temp = input[i]
+			input[i] = input[i-1]
+			input[i-1] = temp
+			if i > 1 {
+				i -= 2
+			}
+		}
+	}
+	return input
+}//*/
+
+/*
 /// Rearranges characters in a string in order to respect the
 /// canonical ordering properties.
 func canonicalOrdering(input []int) []int {
 	
-	fmt.Printf("canonicalOrdering(): \t")
+	/*fmt.Printf("canonicalOrdering(): \t")
 	for l:=0; l<len(input);l++ {
 		fmt.Printf(strconv.Itob(input[l],  10)+ " ")
 	}
 	fmt.Printf("\n")
+	*//*
 	
 	swap := true
 	output := input
 	
+	
 	for swap {
 		swap = false
+		// fmt.Printf("output[0]: "+strconv.Itob(output[0],  10)+"\n")
+		
+		// fmt.Printf("Got through first, output[0]: "+strconv.Itob(output[0],  10)+"\n")
 		last := combiningClass(output[0])
-		fmt.Printf("Got through first, output[0]: "+strconv.Itob(output[0],  10)+"\n")
+		if last != 0 {
+			last = 256 // fix for strings starting with a combining mark
+		}
 		
 		for i:=0; i < len(output) -1; i++ {
 			next := combiningClass(output[i+1])
-			if next != 0 && last > next {
+			if next != 0 && last >= next {
 				for j:=(i+1); j > 0; j-- {
 					var t int
 					if combiningClass(output[j-1]) <= next {
@@ -171,9 +262,10 @@ func canonicalOrdering(input []int) []int {
 			}
 			last = next
 		}
+		
 	}
 	return output
-}
+}//*/
 
 
 /// Tries to compose two characters canonically and returns the composed character or -1 if no composition could be found.
@@ -218,7 +310,7 @@ func compose(a, b int) int {
 	return -1
 }
 
-// Returns the index of a rune inside the composition table if fount, -1 otherwise
+// Returns the index of a rune inside the composition table if found, -1 otherwise
 func composeIndex(a int) int {
 	if (a >> 8 >= len(_Composition_composePage)) {
 		return -1
@@ -240,7 +332,7 @@ func combiningClass(c int) int {
 	var h int = c >> 8
 	var l int = c & 0xff
 	
-	fmt.Printf("combiningClass():\t"+strconv.Itob(c,  10)+"\t"+strconv.Itob(h,  10)+"\t"+strconv.Itob(l,  10)+"\n")
+	// fmt.Printf("combiningClass():\t"+strconv.Itob(c,  10)+"\t"+strconv.Itob(h,  10)+"\t"+strconv.Itob(l,  10)+"\n")
 	
 	
 	var i int = _CombiningClass_i[h]

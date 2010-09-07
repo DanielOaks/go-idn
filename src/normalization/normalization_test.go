@@ -8,12 +8,12 @@ package normalization
 
 
 import (
-	"fmt"
+	//"fmt"
 	"reflect"
 	"testing"
 	"os"
 	"log"
-/*	"strings"
+	"strings"
 	//"unicode"
 	"http"
 	"strconv"
@@ -56,7 +56,7 @@ func TestRemove(t *testing.T) {
 		t.Errorf("remove(%v) == %v; want %v", hex32(_removeTest.Def), hex32(_removeTest.Pos10), hex32(out))
 	}
 }
-
+/*
 type hex32 []int
 
 func (h hex32) Format(f fmt.State, c int) {
@@ -69,7 +69,7 @@ func (h hex32) Format(f fmt.State, c int) {
 	}
 	fmt.Fprint(f, "]")
 }
-
+*/
 type _nfkcTest struct {
 	C1 []int
 	C2 []int
@@ -87,7 +87,7 @@ func TestDecomposeHangul(t *testing.T) {
 		t.Errorf("decomposeHangul(BA14) == %v; want %v", hex32(out), hex32(want))
 	}
 }
-
+/*
 func TestNKFC(t *testing.T) {
 	
 	var a []int = []int{0xFA6C}
@@ -102,7 +102,8 @@ func TestNKFC(t *testing.T) {
 
 
 // Downloads the NormalizationTest.txt from unicode.org and tests all rows as described in the file
-/*
+
+
 func TestNKFC(t *testing.T) {
 	resp, _, err:= http.Get("http://www.unicode.org/Public/5.2.0/ucd/NormalizationTest.txt")
 	
@@ -117,6 +118,7 @@ func TestNKFC(t *testing.T) {
 	
 	
 	for i:=0; true; i++ {
+	//	fmt.Printf("line = " + strconv.Itob(i,  10)+ "\n ")
 		line, err := input.ReadString('\n')
 		if err != nil {
 			if err == os.EOF {
@@ -125,10 +127,6 @@ func TestNKFC(t *testing.T) {
 			die.Log(err)
 		}
 		
-		if i == 13917 {
-			fmt.Printf("Line 13916")
-			break // 
-		}
 		
 		line = strings.TrimSpace(line)
 		
@@ -181,6 +179,7 @@ func TestNKFC(t *testing.T) {
 			if !reflect.DeepEqual(test.C4, NFKC(test.C2)) {
 				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C2 - Line: %v", hex32(test.C2), hex32(NFKC(test.C2)), hex32(test.C4), i+1)
 			}
+		//	fmt.Printf("%v\n", hex32(test.C3))
 			if !reflect.DeepEqual(test.C4, NFKC(test.C3)) {
 				t.Errorf("NormalizeNFCK(%v) == %v; want %v \t\t C3 - Line: %v", hex32(test.C3), hex32(NFKC(test.C3)), hex32(test.C4), i+1)
 			}

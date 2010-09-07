@@ -4,7 +4,7 @@
 
 # This file is part of go-idn
 
-include $(GOROOT)/src/Make.$(GOARCH)
+include $(GOROOT)/src/Make.inc #$(GOARCH)
 
 TARG=idn/idna
 GOFILES=\

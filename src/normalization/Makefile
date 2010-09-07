@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-include $(GOROOT)/src/Make.$(GOARCH)
+include $(GOROOT)/src/Make.inc #$(GOARCH)
 
 TARG=idn/normalization
 GOFILES=\
@@ -12,15 +12,15 @@ GOFILES=\
 	
 include $(GOROOT)/src/Make.pkg
 
-maketables: maketables.go
-	$(GC) maketables.go
-	$(LD) -o maketables maketables.$O
+#maketables: maketables.go
+#	$(GC) maketables.go
+#	$(LD) -o maketables maketables.$O
 
 
 
-tables:	maketables
-	$(GC) maketables.go
-	$(LD) -o maketables maketables.$O
-	./maketables > tables2.go
-	gofmt -w tables2.go
-	rm -f maketables
+tables:	maketables.py
+#	$(GC) maketables.go#
+#	$(LD) -o maketables maketables.$O
+	python maketables.py > tables.go
+	gofmt -w tables.go
+#	rm -f maketables

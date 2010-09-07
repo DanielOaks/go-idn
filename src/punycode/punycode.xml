@@ -1,0 +1,9 @@
+<codewalk title="Punycode codec">
+	<step title="Introduction" src="doc/codewalk/punycode.go:/Copyright/,/package/" >
+		Punycode is a derivitive of the Bootstring algorithm. It's been standardized in RFC 3492. Punycode is used by the IDNA protocol [IDNA] for converting domain labels into ASCII; it is not designed for any other purpose. It is explicitly not designed for processing arbitrary free text.
+	</step>
+
+	<step title="Bootstring parameters" src="doc/codewalk/punycode.go:/TMIN  /, /)/">
+	The Bootstring algorithm takes a couple of constant parameters which are defined as such.
+	</step>
+</codewalk>
