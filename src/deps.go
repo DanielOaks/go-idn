@@ -8,7 +8,8 @@ import (
  "go-idn.googlecode.com/hg/src/idna"
 )
 
-func notImportant() bool {
+// Hack to make goinstall fetch all packages at once.
+func NotImportant() bool {
 	dep := idna.ACE_PREFIX
 	dep2 := stringprep.NO_NFKC
 	dep3  punycode.TMIN
