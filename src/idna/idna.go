@@ -10,8 +10,8 @@
 package idna
 
 import (
-	"idn/punycode" 
-	"idn/stringprep" 
+	"go-idn.googlecode.com/hg/src/punycode"
+	"go-idn.googlecode.com/hg/src/stringprep"
 	"os"
 	"strings"
 )

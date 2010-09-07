@@ -6,9 +6,9 @@
 
 include $(GOROOT)/src/Make.inc #$(GOARCH) 
 
-TARG=idn/idna
+TARG=idn
 GOFILES=\
-	idna.go\
+	deps.go\
 	
 
 include $(GOROOT)/src/Make.pkg

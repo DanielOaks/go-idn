@@ -8,7 +8,7 @@
 package stringprep
 
 import (
-	"idn/normalization"
+	"go-idn.googlecode.com/hg/src/stringprep"
 	"utf8"
 	"bytes"
 )
