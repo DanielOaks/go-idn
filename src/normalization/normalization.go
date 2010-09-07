@@ -6,7 +6,27 @@
 
 package normalization
 
+import (
+	"strconv"
+	"fmt"
+)
+// Normalization Forms. At the moment only NFKC is supported.
+const (
+	NFD = iota // Canonical Decomposition
+	NFC // Canonicaal Decomposition followed by Canonical Composition
+	NFKD // Compatibility Decomposition
+	//NFKC // Compatibility Decomposition, followed by Canonical Composition
+)
 
+/*
+// TODO: Create a function all the normalization forms. 
+//       The function can then be called by NFKC() with 
+//       the  correct form parameter. 
+func Normalize(input []int, form int) []int {
+	var do_compat bool = (form == NFKC || form == NFKD)
+	var do_compose bool = (mode == NFC || mode == NFKC)
+}
+//*/
 
 // Applies NFKC normalization to an array of runes and returns a normalized rune array
 func NFKC(input []int) []int {
@@ -32,6 +52,7 @@ func NFKC(input []int) []int {
 			
 		} else {
 			index := decomposeIndex(code)
+			fmt.Printf("index = " + strconv.Itob(index,  10)+ "\n ")
 			if index == -1 {
 				output = addCP(output, code)
 			} else {
@@ -118,13 +139,20 @@ func decomposeIndex(c int) int {
 /// Rearranges characters in a string in order to respect the
 /// canonical ordering properties.
 func canonicalOrdering(input []int) []int {
-
+	
+	fmt.Printf("canonicalOrdering(): \t")
+	for l:=0; l<len(input);l++ {
+		fmt.Printf(strconv.Itob(input[l],  10)+ " ")
+	}
+	fmt.Printf("\n")
+	
 	swap := true
 	output := input
 	
 	for swap {
 		swap = false
 		last := combiningClass(output[0])
+		fmt.Printf("Got through first, output[0]: "+strconv.Itob(output[0],  10)+"\n")
 		
 		for i:=0; i < len(output) -1; i++ {
 			next := combiningClass(output[i+1])
@@ -207,8 +235,13 @@ func composeIndex(a int) int {
 	
 // Returns the combining class of a given character.
 func combiningClass(c int) int {
+	
+	
 	var h int = c >> 8
 	var l int = c & 0xff
+	
+	fmt.Printf("combiningClass():\t"+strconv.Itob(c,  10)+"\t"+strconv.Itob(h,  10)+"\t"+strconv.Itob(l,  10)+"\n")
+	
 	
 	var i int = _CombiningClass_i[h]
 	if i > -1 {

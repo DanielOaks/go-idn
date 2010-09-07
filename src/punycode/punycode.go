@@ -55,7 +55,7 @@ func ToUnicode(input string) (string, os.Error) {
 	return stringify(output), err
 }
 
-// ToASCII returns the Punycode encoding of the Rune sequence "runes" and a nil os.Error when successful.
+// ToASCIIRunes returns the Punycode encoding of the Rune sequence "runes" and a nil os.Error when successful.
 func ToASCIIRunes(runes []int) (string, os.Error) {
 	var n int = INITIAL_N
 	var delta int = 0

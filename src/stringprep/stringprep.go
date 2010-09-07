@@ -8,7 +8,7 @@
 package stringprep
 
 import (
-	"go-idn.googlecode.com/hg/src/normalization"
+	"idn/normalization"
 	"utf8"
 	"bytes"
 )
@@ -54,24 +54,24 @@ type ProfileElement struct {
 
 
 // Exports tables
-var Tables = map[string]Table {
-	"A1":_A1,
-	"B1":_B1,
-	"B2":_B2,
-	"B3":_B3,
-	"C11":_C11,
-	"C12":_C12,
-	"C21":_C21,
-	"C22":_C22,
-	"C3":_C3,
-	"C4":_C4,
-	"C5":_C5,
-	"C6":_C6,
-	"C7":_C7,
-	"C8":_C8,
-	"C9":_C9,
-	"D1":_D1,
-	"D2":_D2,
+var Tables = map[string]Table{
+	"A1":  _A1,
+	"B1":  _B1,
+	"B2":  _B2,
+	"B3":  _B3,
+	"C11": _C11,
+	"C12": _C12,
+	"C21": _C21,
+	"C22": _C22,
+	"C3":  _C3,
+	"C4":  _C4,
+	"C5":  _C5,
+	"C6":  _C6,
+	"C7":  _C7,
+	"C8":  _C8,
+	"C9":  _C9,
+	"D1":  _D1,
+	"D2":  _D2,
 }
 
 func Nameprep(label string) string {

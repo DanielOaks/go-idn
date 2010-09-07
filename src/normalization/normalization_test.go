@@ -13,7 +13,7 @@ import (
 	"testing"
 	"os"
 	"log"
-	"strings"
+/*	"strings"
 	//"unicode"
 	"http"
 	"strconv"
@@ -21,33 +21,6 @@ import (
 )
 
 var die = log.New(os.Stderr, nil, "", log.Lexit|log.Lshortfile)
-/*
-// Random samples from the decompose index
-var decomposeTests = [][]int {
-    []int{0x00A0, 0},
-    []int{0x00A8, 1},
-    []int{0x00AA, 2},
-    []int{0x00AF, 3},
-    []int{0x3161, 1518},
-    []int{0x3162, 1519},
-    []int{0x3163, 1520},
-    []int{0x3164, 1521},
-	[]int{0xFFEC, 2826},
-    []int{0xFFED, 2827},
-    []int{0xFFEE, 2828},
-}
-
-func TestDecomposeIndex(t *testing.T) {
-
-	for _, tt := range decomposeTests {
-		var out int
-		
-		out = decomposeIndex(tt[0])
-		if !reflect.DeepEqual(out, tt[1]) {
-			t.Errorf("decomposeIndex(%v) = %v; want %v", string(tt[0]), string(out), string(tt[1]))
-		}
-	}
-}*/
 
 
 
@@ -114,10 +87,10 @@ func TestDecomposeHangul(t *testing.T) {
 		t.Errorf("decomposeHangul(BA14) == %v; want %v", hex32(out), hex32(want))
 	}
 }
-/*
+
 func TestNKFC(t *testing.T) {
 	
-	var a []int = []int{0xBA14}
+	var a []int = []int{0xFA6C}
 
 	out := NFKC(a) 
 	
@@ -129,6 +102,7 @@ func TestNKFC(t *testing.T) {
 
 
 // Downloads the NormalizationTest.txt from unicode.org and tests all rows as described in the file
+/*
 func TestNKFC(t *testing.T) {
 	resp, _, err:= http.Get("http://www.unicode.org/Public/5.2.0/ucd/NormalizationTest.txt")
 	
@@ -140,7 +114,9 @@ func TestNKFC(t *testing.T) {
 	}
 	input := bufio.NewReader(resp.Body)
 	
-		for i:=0; true; i++ {
+	
+	
+	for i:=0; true; i++ {
 		line, err := input.ReadString('\n')
 		if err != nil {
 			if err == os.EOF {
@@ -149,7 +125,8 @@ func TestNKFC(t *testing.T) {
 			die.Log(err)
 		}
 		
-		if i == 12500 {
+		if i == 13917 {
+			fmt.Printf("Line 13916")
 			break // 
 		}
 		
@@ -161,11 +138,11 @@ func TestNKFC(t *testing.T) {
 			
 			// Remove comments
 			if strings.LastIndex(line, "#") != -1 {
-				line = strings.Split(line, "#",0)[0]
+				line = strings.Split(line, "#",-1)[0]
 			}
 			
 			
-			columns_s := strings.Split(line, ";",0)
+			columns_s := strings.Split(line, ";",-1)
 			
 			var test _nfkcTest
 			

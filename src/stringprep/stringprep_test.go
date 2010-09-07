@@ -8,10 +8,10 @@ package stringprep
 
 
 import (
-	//"fmt"
-	//"reflect"
+	// "fmt"
+	// "reflect"
 	"testing"
-	//"os"
+	// "os"
 
 )
 
@@ -29,7 +29,7 @@ func TestInTable(t *testing.T) {
 
 func TestNameprep(t *testing.T) {
 	input := []int{0x0644, 0x064A, 0x0647, 0x0645, 0x0627, 0x0628, 0x062A, 0x0643, 0x0644, 0x0645, 0x0648, 0x0634, 0x0639, 0x0631, 0x0628, 0x064A, 0x061F}
-	output := Stringprep(input, Profiles["nameprep"])
+	output := StringprepRunes(input, Profiles["nameprep"])
 	if output == nil {
 
 		t.Errorf("Stringprep(\"asdf\", Profiles[\"nameprep\"]) = %s; want \"asdf\"", string(output))
