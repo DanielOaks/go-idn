@@ -4,7 +4,7 @@
 
 include $(GOROOT)/src/Make.inc #$(GOARCH)
 
-TARG=idn/punycode
+TARG=go-idn.googlecode.com/hg/src/punycode
 GOFILES=\
 	punycode.go\
 	

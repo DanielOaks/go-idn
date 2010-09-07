@@ -6,7 +6,7 @@
 
 include $(GOROOT)/src/Make.inc #$(GOARCH) 
 
-TARG=idn/idna
+TARG=go-idn.googlecode.com/hg/src/idna
 GOFILES=\
 	idna.go\
 	

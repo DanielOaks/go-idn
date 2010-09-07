@@ -4,7 +4,7 @@
 
 include $(GOROOT)/src/Make.inc #	$(GOARCH)
 
-TARG=idn/stringprep
+TARG=go-idn.googlecode.com/hg/src/stringprep
 GOFILES=\
 	stringprep.go\
 	tables.go\

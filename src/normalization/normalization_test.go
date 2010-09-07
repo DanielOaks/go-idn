@@ -100,6 +100,18 @@ func TestNKFC(t *testing.T) {
 }//*/
 
 
+type hex32 []int
+
+func (h hex32) Format(f fmt.State, c int) {
+	fmt.Fprint(f, "[")
+	for i, v := range h {
+		if i > 0 {
+			fmt.Fprint(f, " ")
+		}
+		fmt.Fprintf(f, "%x", v)
+	}
+	fmt.Fprint(f, "]")
+}
 
 // Downloads the NormalizationTest.txt from unicode.org and tests all rows as described in the file
 

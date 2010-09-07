@@ -9,10 +9,7 @@
 // there are multiple ways a character can be represented.
 package normalization
 
-import (
-	//"strconv"
-	"fmt"
-)
+
 // Normalization Forms. At the moment only NFKC is supported.
 const (
 	NFD = iota // Canonical Decomposition
@@ -32,18 +29,6 @@ func Normalize(input []int, form int) []int {
 //*/
 
 
-type hex32 []int
-
-func (h hex32) Format(f fmt.State, c int) {
-	fmt.Fprint(f, "[")
-	for i, v := range h {
-		if i > 0 {
-			fmt.Fprint(f, " ")
-		}
-		fmt.Fprintf(f, "%x", v)
-	}
-	fmt.Fprint(f, "]")
-}
 
 
 // Applies NFKC normalization to an array of runes and returns a normalized rune array
@@ -86,72 +71,6 @@ func NFKC(input []int) []int {
 	// Bring the string in to canonical order
 	output = canonicalOrdering(output)
 	
-	/*
-	lastClass := -1
-	starterPos := 0
-	sourceLength := len(output)
-	targetPos := 1
-	starterCh := output[0]
-	
-	for sourcePos :=1; sourcePos < sourceLength; sourcePos++ {
-		ch := output[sourcePos]
-		chClass := combiningClass(ch)
-		composite := compose(starterCh, ch)
-		if composite != -1 && lastClass < chClass {
-			output[starterPos] = composite
-			starterCh = composite
-		} else if chClass == 0 {
-			starterPos = targetPos
-			starterCh = ch
-			lastClass = -1
-			output[targetPos] = ch
-			targetPos = targetPos +1
-		} else {
-			lastClass = chClass
-			output[targetPos] = ch
-			targetPos = targetPos +1
-		}
-	}//*/
-	
-/*
-	lastClass := 0
-	starterPos := 0
-	//sourceLength := len(output)
-	//targetPos := 0
-	
-	
-	for i :=0; i < len(output); i++ {
-		chClass := combiningClass(output[i])
-		
-		if i > 0 && (lastClass == 0 || lastClass != chClass) {
-			composite := compose(output[starterPos], output[i])
-			if composite != -1 && lastClass < chClass {
-				output[starterPos] = composite
-				output = remove(output, starterPos)
-				
-				i--
-				
-				if starterPos == i {
-					lastClass = 0
-				} else {
-					lastClass = combiningClass(output[i-1])
-				}
-				continue
-			}
-		} else if(chClass == 0) {
-			//starterCh = output[i]
-			lastClass = 0
-		} 
-			lastClass = chClass
-		
-		
-	}//*/
-	
-	
-	
-	//fmt.Printf("output = %v\n", hex32(output))
-	
-	
 	// Do the canonical composition
 	last_cc := 0
 	last_start := 0
@@ -188,9 +107,9 @@ func NFKC(input []int) []int {
 		
 		last_cc = cc
 		
-	}//*/
+	}
 	
-	return output//[0:targetPos-1]
+	return output
 }
 
 
@@ -217,55 +136,7 @@ func canonicalOrdering(input []int) []int {
 		}
 	}
 	return input
-}//*/
-
-/*
-/// Rearranges characters in a string in order to respect the
-/// canonical ordering properties.
-func canonicalOrdering(input []int) []int {
-	
-	/*fmt.Printf("canonicalOrdering(): \t")
-	for l:=0; l<len(input);l++ {
-		fmt.Printf(strconv.Itob(input[l],  10)+ " ")
-	}
-	fmt.Printf("\n")
-	*//*
-	
-	swap := true
-	output := input
-	
-	
-	for swap {
-		swap = false
-		// fmt.Printf("output[0]: "+strconv.Itob(output[0],  10)+"\n")
-		
-		// fmt.Printf("Got through first, output[0]: "+strconv.Itob(output[0],  10)+"\n")
-		last := combiningClass(output[0])
-		if last != 0 {
-			last = 256 // fix for strings starting with a combining mark
-		}
-		
-		for i:=0; i < len(output) -1; i++ {
-			next := combiningClass(output[i+1])
-			if next != 0 && last >= next {
-				for j:=(i+1); j > 0; j-- {
-					var t int
-					if combiningClass(output[j-1]) <= next {
-						break
-					}
-					t = output[j]
-					output[j] = output[j-1]
-					output[j-1] = t
-					swap = true
-				}
-				next = last
-			}
-			last = next
-		}
-		
-	}
-	return output
-}//*/
+}
 
 
 /// Tries to compose two characters canonically and returns the composed character or -1 if no composition could be found.

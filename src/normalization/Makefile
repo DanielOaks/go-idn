@@ -4,7 +4,7 @@
 
 include $(GOROOT)/src/Make.inc #$(GOARCH)
 
-TARG=idn/normalization
+TARG=go-idn.googlecode.com/hg/src/normalization
 GOFILES=\
 	normalization.go\
 	tables.go\
