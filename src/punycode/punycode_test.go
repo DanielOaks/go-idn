@@ -129,6 +129,27 @@ func TestDecode(t *testing.T) {
 }
 
 
+func TestWeird(t *testing.T) {
+	text := []uint8 {0x61, 0x2D, 0xC4, 0x2E, 0x70, 0x74}
+	test := string(text)
+	text2 := []uint8(test)
+	
+	if len(text) != len(text2) {
+		t.Errorf("TestWeird")
+	}
+	for i:=0;i<len(text);i++{
+		if text[i] != text2[i] {
+			t.Errorf("more weirdness")
+		}
+	}
+	
+	asdf, fda := ToUnicode(string(text))
+	if fda != nil {
+		t.Errorf(fda.String())
+	}
+	t.Errorf(asdf)
+}
+
 func TestIsBasic(t *testing.T) {
 	if isBasic(128) {
 		t.Errorf("isBasic(128) = true; want false")

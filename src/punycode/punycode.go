@@ -45,13 +45,12 @@ const (
 
 // ToASCII returns the Punycode encoding of the string input as a string and a nil os.Error when successful.
 func ToASCII(input string) (string, os.Error) {
-	runes := bytes.Runes([]byte(input))
-	return ToASCIIRunes(runes)
+	return ToASCIIRunes(runify(input))
 }
 
 // ToUnicode returns the decoded Punycode string input as a UTF-8 encoded string and a nil os.Error when successful.
 func ToUnicode(input string) (string, os.Error) {
-	output, err := ToUnicodeRunes(input)
+	output, err := ToUnicodeRunes(runify(input))
 	return stringify(output), err
 }
 
@@ -167,21 +166,21 @@ func ToASCIIRunes(runes []int) (string, os.Error) {
 }
 
 // ToUnicodeRunes returns the decoded rune sequence of the input string and a nil os.Error when successful.
-func ToUnicodeRunes(input string) ([]int, os.Error) {
+func ToUnicodeRunes(input []int) ([]int, os.Error) {
 	var n int = INITIAL_N
 	var i int = 0
 	var bias int = INITIAL_BIAS
 
 	var output []int  = make([]int, 0, len(input))
-	input_b := []byte(input)
+	//input_b := []byte(input)
 
-	var d int = bytes.LastIndex(input_b, []byte{DELIMITER})
+	var d int = lastIndex(input, DELIMITER)
 	if d > 0 {
 		for j := 0; j < d; j++ {
-			if !isBasic(int(input_b[j])) {
-				return nil, os.ErrorString(BAD_INPUT + " line 178")
+			if !isBasic(input[j]) {
+				return nil, os.ErrorString(BAD_INPUT)
 			}
-			output = addCP(output, int(input_b[j]))
+			output = addCP(output, input[j])
 		}
 		d++
 
@@ -189,17 +188,17 @@ func ToUnicodeRunes(input string) ([]int, os.Error) {
 		d = 0
 	}
 
-	for d < len(input_b) {
+	for d < len(input) {
 		var oldi int = i
 		var w int = 1
 
 		var k int
 		for k = BASE; true; k += BASE {
-			if d == len(input_b) {
-				return nil, os.ErrorString(BAD_INPUT + " line 195")
+			if d == len(input) {
+				return nil, os.ErrorString(BAD_INPUT)
 			}
 
-			var c int = int(input_b[d])
+			var c int = input[d]
 			d++
 
 			var err os.Error
@@ -354,7 +353,31 @@ func insert(s []int, pos int, cp int) []int {
 	
 	return s
 }
+/*
+func insert(s []int, pos int, cp int) []int {
+	lens:=len(s)
+	a := s[0:pos]
+	b := s[pos:]
+	
+	news := make([]int, lens+1, resize(lens+1))
+	copy(news[0:], a)
+	news[pos] = cp
+	copy(news[pos+1:], b)
+	
+	s=news
+	
+	return s
+}*/
 
+func lastIndex(s []int, sep int) int {
+	last := -1
+	for i:=0;i<len(s);i++ {
+		if s[i] == sep {
+			last = i
+		}
+	}
+	return last
+}
 
 // turn a slice of runes into an equivalent string
 func stringify(runes []int) string {
@@ -364,4 +387,13 @@ func stringify(runes []int) string {
 		i += utf8.EncodeRune(r, t[i:])
 	}
 	return string(t)
+}
+
+func runify(str string) []int {
+	t := make([]int, len(str))
+	//i:=0
+	for i, s:= range str {
+		t[i]=s
+	}
+	return t
 }

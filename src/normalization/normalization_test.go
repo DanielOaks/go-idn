@@ -77,9 +77,10 @@ func TestDecomposeHangul(t *testing.T) {
 
 
 
-type hex32 []int
+type hex32 string
 
-func (h hex32) Format(f fmt.State, c int) {
+func (s hex32) Format( fmt.State, c int) {
+	h := 
 	fmt.Fprint(f, "[")
 	for i, v := range h {
 		if i > 0 {
