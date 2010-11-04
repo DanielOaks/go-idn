@@ -85,7 +85,6 @@ func loadChars() {
 			t = tname[3] // table name
 
 
-
 			if "A.1" == t {
 				fmt.Printf("var _A1 = Table { \n")
 			} else if "B.1" == t {

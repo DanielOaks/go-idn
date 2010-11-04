@@ -15,6 +15,7 @@ package punycode
 import (
 	"os"
 	"bytes"
+	"strings"
 	"utf8"
 )
 
@@ -43,51 +44,44 @@ const (
 	OVERFLOW  = "Overflow"
 )
 
-// ToASCII returns the Punycode encoding of the string input as a string and a nil os.Error when successful.
+
+// ToASCII returns the Punycode encoding of the input string and a nil os.Error when successful. 
+// Input is assumed to be an utf8 encoded string
 func ToASCII(input string) (string, os.Error) {
-	return ToASCIIRunes(runify(input))
-}
-
-// ToUnicode returns the decoded Punycode string input as a UTF-8 encoded string and a nil os.Error when successful.
-func ToUnicode(input string) (string, os.Error) {
-	output, err := ToUnicodeRunes(runify(input))
-	return stringify(output), err
-}
-
-// ToASCIIRunes returns the Punycode encoding of the Rune sequence "runes" and a nil os.Error when successful.
-func ToASCIIRunes(runes []int) (string, os.Error) {
 	var n int = INITIAL_N
 	var delta int = 0
 	var bias int = INITIAL_BIAS
 
-	// Create a slice for the output. By using a slice we don't create a new array for each letter (I think)
-	var output []byte = make([]byte, 0, len(runes))
+	// Create a byte array for the output.
+	output := make([]byte, 0, len(input))
+	input_s := utf8.NewString(input) 
 
+	
 	// Copy all basic code points to the output
 	var b int = 0
-	for i := 0; i < len(runes); i++ {
-		if isBasic(runes[i]) {
-			// runes[i] is guranteed to be less than 128
-			output = bytes.AddByte(output, byte(runes[i]))
+	for i := 0; i < input_s.RuneCount(); i++ {
+		if isBasic(input_s.At(i)) {
+			// input[i] is guranteed to be less than 128
+			output = bytes.AddByte(output, byte(input_s.At(i)))
 			b++
 		}
 	}
 
 
-	// Append delimiter
+	// Append DELIMITER 
 	if b > 0 {
 		output = bytes.AddByte(output, DELIMITER)
 	}
 
 	var h int = b
 
-	for h < len(runes) {
+	for h < input_s.RuneCount() {
 
 		var m int = MAXINT_S
 
 		// Find the minimum code point >= n
-		for i := 0; i < len(runes); i++ {
-			var c int = runes[i]
+		for i := 0; i < input_s.RuneCount(); i++ {
+			c  := input_s.At(i)
 			if c >= n && c < m {
 				m = c
 			}
@@ -101,8 +95,8 @@ func ToASCIIRunes(runes []int) (string, os.Error) {
 		delta = delta + (m-n)*(h+1)
 		n = m
 
-		for j := 0; j < len(runes); j++ {
-			var c int = runes[j]
+		for j := 0; j < input_s.RuneCount(); j++ {
+			var c int = input_s.At(j)
 			if c < n {
 				delta++
 				if 0 == delta {
@@ -161,26 +155,32 @@ func ToASCIIRunes(runes []int) (string, os.Error) {
 		delta++
 		n++
 	}
+	
 
 	return string(output[0:(len(output))]), nil
 }
 
-// ToUnicodeRunes returns the decoded rune sequence of the input string and a nil os.Error when successful.
-func ToUnicodeRunes(input []int) ([]int, os.Error) {
+
+// ToUnicode takes a punycoded string and returns the decoded string and a nil os.Error when successful.
+func ToUnicode(input string) (string, os.Error) {
 	var n int = INITIAL_N
 	var i int = 0
 	var bias int = INITIAL_BIAS
 
+	input_s := utf8.NewString(input) 
 	var output []int  = make([]int, 0, len(input))
-	//input_b := []byte(input)
 
-	var d int = lastIndex(input, DELIMITER)
+
+	
+	var d int = strings.LastIndex(input, string(DELIMITER))
 	if d > 0 {
+		// Assert that characters before DELIMITER are ASCII
+		// TODO: Clarify
 		for j := 0; j < d; j++ {
-			if !isBasic(input[j]) {
-				return nil, os.ErrorString(BAD_INPUT)
+			if !isBasic(input_s.At(j)) {
+				return "", os.ErrorString(BAD_INPUT)
 			}
-			output = addCP(output, input[j])
+			output = addCP(output, input_s.At(j))
 		}
 		d++
 
@@ -188,29 +188,34 @@ func ToUnicodeRunes(input []int) ([]int, os.Error) {
 		d = 0
 	}
 
-	for d < len(input) {
-		var oldi int = i
-		var w int = 1
-
-		var k int
+	for d < input_s.RuneCount() {
+		
+		var (
+			oldi int = i
+			w int = 1
+			k int
+		)
+		
 		for k = BASE; true; k += BASE {
-			if d == len(input) {
-				return nil, os.ErrorString(BAD_INPUT)
+			if d == input_s.RuneCount() {
+				return "", os.ErrorString(BAD_INPUT)
 			}
 
-			var c int = input[d]
+			var c int = input_s.At(d)
 			d++
 
-			var err os.Error
-			var digit int
+			var (
+				err os.Error
+				digit int
+			)
 			digit, err = codepoint2digit(c)
 
 			if err != nil {
-				return nil, err
+				return "", err
 			}
 
 			if digit > ((MAXINT_S - i) / w) {
-				return nil, os.ErrorString(OVERFLOW + " line 202")
+				return "", os.ErrorString(OVERFLOW + " line 202")
 			}
 
 			i = i + digit*w
@@ -234,7 +239,7 @@ func ToUnicodeRunes(input []int) ([]int, os.Error) {
 		bias = adapt(i-oldi, oldi == 0, len(output)+1)
 
 		if i/(len(output)+1) > (MAXINT_S - n) {
-			return nil, os.ErrorString(OVERFLOW + " line 226")
+			return "", os.ErrorString(OVERFLOW + " line 226")
 		}
 
 		n = n + i/(len(output)+1)
@@ -243,8 +248,12 @@ func ToUnicodeRunes(input []int) ([]int, os.Error) {
 		output = insert(output, i, n)
 		i++
 	}
-	return output, nil
+	
+
+	
+	return string(output), nil
 }
+
 
 
 // Bias adaption function as described in RFC 3492 - 6.1
@@ -287,15 +296,11 @@ func codepoint2digit(cp int) (int, os.Error) {
 	} else {
 		return BASE, nil
 	}
-
-
-	// else Bad input!
-
+	// else Bad input
 	return -1, os.ErrorString(BAD_INPUT)
-
 }
 
-// Returns the rune and a non-nil Error hwen d < 36.
+// Returns the rune and a non-nil Error when d < 36.
 // Else it returns (unicode.MaxRune + 1) and a BadInputError
 func digit2codepoint(d int) (int, os.Error) {
 
@@ -307,9 +312,6 @@ func digit2codepoint(d int) (int, os.Error) {
 		return d - 26 + '0', nil
 	}
 	// else Bad input!
-
-
-
 	return -1, os.ErrorString(BAD_INPUT)
 }
 
@@ -338,6 +340,7 @@ func resize(n int) int {
 	}
 	return n + n/2
 }
+
 
 func insert(s []int, pos int, cp int) []int {
 	lens:=len(s)
