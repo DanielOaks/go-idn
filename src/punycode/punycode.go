@@ -14,7 +14,6 @@ package punycode
 
 import (
 	"os"
-	"bytes"
 	"strings"
 	"utf8"
 )
@@ -62,7 +61,7 @@ func ToASCII(input string) (string, os.Error) {
 	for i := 0; i < input_s.RuneCount(); i++ {
 		if isBasic(input_s.At(i)) {
 			// input[i] is guranteed to be less than 128
-			output = bytes.AddByte(output, byte(input_s.At(i)))
+			output = append(output, byte(input_s.At(i)))
 			b++
 		}
 	}
@@ -70,7 +69,7 @@ func ToASCII(input string) (string, os.Error) {
 
 	// Append DELIMITER 
 	if b > 0 {
-		output = bytes.AddByte(output, DELIMITER)
+		output = append(output, DELIMITER)
 	}
 
 	var h int = b
@@ -131,7 +130,7 @@ func ToASCII(input string) (string, os.Error) {
 						return "", err
 					}
 
-					output = bytes.AddByte(output, byte(nbyte))
+					output = append(output, byte(nbyte))
 					q = (q - t) / (BASE - t)
 
 				}
@@ -144,7 +143,7 @@ func ToASCII(input string) (string, os.Error) {
 					return "", err
 				}
 
-				output = bytes.AddByte(output, byte(nbyte))
+				output = append(output, byte(nbyte))
 				bias = adapt(delta, h == b, h+1)
 				delta = 0
 				h++
@@ -387,7 +386,7 @@ func stringify(runes []int) string {
 	t := make([]byte, len(runes)*4) // kludge!
 	i := 0
 	for _, r := range runes {
-		i += utf8.EncodeRune(r, t[i:])
+		i += utf8.EncodeRune(t[i:], r)
 	}
 	return string(t)
 }
