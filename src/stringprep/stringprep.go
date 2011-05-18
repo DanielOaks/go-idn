@@ -247,7 +247,7 @@ func stringify(runes []int) string {
 	t := make([]byte, len(runes)*4) // kludge! 
 	i := 0
 	for _, r := range runes {
-		i += utf8.EncodeRune(r, t[i:])
+		i += utf8.EncodeRune(t[i:], r)
 	}
 	return string(t)
 }
