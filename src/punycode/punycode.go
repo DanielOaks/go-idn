@@ -88,7 +88,7 @@ func ToASCII(input string) (string, os.Error) {
 
 		if (m - n) > ((MAXINT_S - delta) / (h + 1)) {
 			// overflow
-			return "", os.ErrorString(string(OVERFLOW))
+			return "", os.NewError(string(OVERFLOW))
 		}
 
 		delta = delta + (m-n)*(h+1)
@@ -99,7 +99,7 @@ func ToASCII(input string) (string, os.Error) {
 			if c < n {
 				delta++
 				if 0 == delta {
-					return "", os.ErrorString(string(OVERFLOW))
+					return "", os.NewError(string(OVERFLOW))
 				}
 			}
 
@@ -177,7 +177,7 @@ func ToUnicode(input string) (string, os.Error) {
 		// TODO: Clarify
 		for j := 0; j < d; j++ {
 			if !isBasic(input_s.At(j)) {
-				return "", os.ErrorString(BAD_INPUT)
+				return "", os.NewError(BAD_INPUT)
 			}
 			output = addCP(output, input_s.At(j))
 		}
@@ -197,7 +197,7 @@ func ToUnicode(input string) (string, os.Error) {
 		
 		for k = BASE; true; k += BASE {
 			if d == input_s.RuneCount() {
-				return "", os.ErrorString(BAD_INPUT)
+				return "", os.NewError(BAD_INPUT)
 			}
 
 			var c int = input_s.At(d)
@@ -214,7 +214,7 @@ func ToUnicode(input string) (string, os.Error) {
 			}
 
 			if digit > ((MAXINT_S - i) / w) {
-				return "", os.ErrorString(OVERFLOW + " line 202")
+				return "", os.NewError(OVERFLOW + " line 202")
 			}
 
 			i = i + digit*w
@@ -238,7 +238,7 @@ func ToUnicode(input string) (string, os.Error) {
 		bias = adapt(i-oldi, oldi == 0, len(output)+1)
 
 		if i/(len(output)+1) > (MAXINT_S - n) {
-			return "", os.ErrorString(OVERFLOW + " line 226")
+			return "", os.NewError(OVERFLOW + " line 226")
 		}
 
 		n = n + i/(len(output)+1)
@@ -296,7 +296,7 @@ func codepoint2digit(cp int) (int, os.Error) {
 		return BASE, nil
 	}
 	// else Bad input
-	return -1, os.ErrorString(BAD_INPUT)
+	return -1, os.NewError(BAD_INPUT)
 }
 
 // Returns the rune and a non-nil Error when d < 36.
@@ -311,7 +311,7 @@ func digit2codepoint(d int) (int, os.Error) {
 		return d - 26 + '0', nil
 	}
 	// else Bad input!
-	return -1, os.ErrorString(BAD_INPUT)
+	return -1, os.NewError(BAD_INPUT)
 }
 
 

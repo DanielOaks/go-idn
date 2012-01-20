@@ -74,12 +74,12 @@ func toASCIIRaw(label string) (string, os.Error) {
 	// Step 3: - Verify the absence of non-LDH ASCII code points
 	for _, c := range label {
 		if (c <= 0x2c) || (c >= 0x2e && c <= 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x60) || (c >= 0x7b && c <= 0x7f) {
-			return original, os.ErrorString("Contains non-LDH ASCII codepoints")
+			return original, os.NewError("Contains non-LDH ASCII codepoints")
 		}
 
 	}
 	if strings.HasPrefix(label, "-") || strings.HasSuffix(label, "-") {
-		return original, os.ErrorString("Contains hyphen at either end of the string")
+		return original, os.NewError("Contains hyphen at either end of the string")
 	}
 
 	// Step 4: If the sequence contains any code points outside the ASCII range 
@@ -98,7 +98,7 @@ func toASCIIRaw(label string) (string, os.Error) {
 
 		// Step 5 Verify that the sequence does NOT begin with the ACE prefix.
 		if strings.HasPrefix(label, ACE_PREFIX) {
-			return label, os.ErrorString("Label starts with ACE prefix")
+			return label, os.NewError("Label starts with ACE prefix")
 		}
 
 		var err os.Error
@@ -117,7 +117,7 @@ func toASCIIRaw(label string) (string, os.Error) {
 		return label, nil
 	}
 
-	return original, os.ErrorString("label empty or too long")
+	return original, os.NewError("label empty or too long")
 }
 
 //
@@ -171,25 +171,25 @@ func toUnicodeRaw(label string) (string, os.Error) {
 
 	// Step 3: Verify that the sequence begins with the ACE prefix, and save a copy of the sequence.
 	if !strings.HasPrefix(label, ACE_PREFIX) {
-		return label, os.ErrorString("Label doesn't begin with the ACE prefix")
+		return label, os.NewError("Label doesn't begin with the ACE prefix")
 	} // else
 
 	// 4. Remove the ACE prefix.
-	label = strings.Split(label, ACE_PREFIX, -1)[1]
+	label = strings.SplitN(label, ACE_PREFIX, -1)[1]
 
 	// 5. Decode the sequence using the decoding algorithm in [PUNYCODE] and fail if there is an error. 
 	//fmt.Printf(label+"\n")
 	results, err := punycode.ToUnicode(label)
 
 	if err != nil {
-		return original, os.ErrorString("Failed punycode decoding: " + err.String())
+		return original, os.NewError("Failed punycode decoding: " + err.String())
 	}
 
 	// 6. Apply ToASCII.
 	verification, err := ToASCII(label)
 
 	if err != nil {
-		return original, os.ErrorString("Failed ToASCII on the decoded sequence: " + err.String())
+		return original, os.NewError("Failed ToASCII on the decoded sequence: " + err.String())
 	}
 
 	// 7. Verify that the result of step 6 matches the saved copy from step 3, 
@@ -198,5 +198,5 @@ func toUnicodeRaw(label string) (string, os.Error) {
 		return results, nil
 	}
 
-	return original, os.ErrorString("Failed verification step")
+	return original, os.NewError("Failed verification step")
 }
