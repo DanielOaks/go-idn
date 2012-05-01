@@ -1,120 +1,105 @@
 // Copyright 2010 Hannes Baldursson. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
-
+//
 // This file is part of go-idn
 
-// Package punycode implements the punycode data encoding as used for encoding
-// of labels in the IDNA framework, as described in RFC 3492. Punycode is used
-// by the IDNA protocol [IDNA] for converting domain labels into ASCII; it is
+// Package punycode implements encoding and decoding of Punycode sequences. See RFC 3492. 
+// Punycode is used by the IDNA protocol for converting domain labels into ASCII; it is
 // not designed for any other purpose.
 // It is explicitly not designed for processing arbitrary free text.
 package punycode
 
-
 import (
-	"os"
-	"strings"
-	"utf8"
+	"bytes"
+	"errors"
 )
 
-
-// Punycode uses the following Bootstring parameter values:
 const (
-	TMIN         = 1
-	TMAX         = 26
-	BASE         = 36
-	INITIAL_N    = 0x80
-	INITIAL_BIAS = 72
-	DAMP         = 700
-	SKEW         = 38
-	DELIMITER    = 0x2D // hyphen '-'
+	// Bootstring parameters specified in RFC 3492
+	Base             = 36
+	TMin             = 1
+	TMax             = 26
+	Skew             = 38
+	Damp             = 700
+	InitialBias      = 72
+	InitialN         = 128  // 0x80 
+	Delimiter   byte = 0x2D // hyphen
 )
 
-// The maximum value of a signed int32.
-// Used for overflow detection
 const (
-	MAXINT_S = 2147483647
+	MaxRune = '\U0010FFFF'
 )
 
-// Error strings
-const (
-	BAD_INPUT = "Bad Input"
-	OVERFLOW  = "Overflow"
-)
+func EncodeString(s string) (string, error) {
+	p, err := Encode([]byte(s))
+	if err != nil {
+		return "", err
+	}
+	return string(p), nil
+}
 
+// Encode returns the Punycode encoding of the UTF-8 string s. 
+func Encode(b []byte) (p []byte, err error) {
+	// Encoding procedure explained in detail in RFC 3492. 
+	n := InitialN
+	delta := 0
+	bias := InitialBias
 
-// ToASCII returns the Punycode encoding of the input string and a nil os.Error when successful. 
-// Input is assumed to be an utf8 encoded string
-func ToASCII(input string) (string, os.Error) {
-	var n int = INITIAL_N
-	var delta int = 0
-	var bias int = INITIAL_BIAS
+	runes := bytes.Runes(b)
 
-	// Create a byte array for the output.
-	output := make([]byte, 0, len(input))
-	input_s := utf8.NewString(input) 
+	var result bytes.Buffer
 
-	
-	// Copy all basic code points to the output
-	var b int = 0
-	for i := 0; i < input_s.RuneCount(); i++ {
-		if isBasic(input_s.At(i)) {
-			// input[i] is guranteed to be less than 128
-			output = append(output, byte(input_s.At(i)))
-			b++
+	basicRunes := 0
+	for i := 0; i < len(runes); i++ {
+		// Write all basic codepoints to result 
+		if runes[i] < 0x80 {
+			_, err = result.WriteRune(runes[i])
+			if err != nil {
+				return nil, err
+			}
+			basicRunes++
 		}
 	}
 
-
-	// Append DELIMITER 
-	if b > 0 {
-		output = append(output, DELIMITER)
+	// Append delimiter
+	if basicRunes > 0 {
+		err = result.WriteByte(Delimiter)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	var h int = b
+	for h := basicRunes; h < len(runes); {
+		var minRune rune = MaxRune
 
-	for h < input_s.RuneCount() {
-
-		var m int = MAXINT_S
-
-		// Find the minimum code point >= n
-		for i := 0; i < input_s.RuneCount(); i++ {
-			c  := input_s.At(i)
-			if c >= n && c < m {
-				m = c
+		// Find the minimum rune >= n in the input
+		for i := 0; i < len(runes); i++ {
+			if int(runes[i]) >= n && runes[i] < minRune {
+				minRune = runes[i]
 			}
 		}
 
-		if (m - n) > ((MAXINT_S - delta) / (h + 1)) {
-			// overflow
-			return "", os.NewError(string(OVERFLOW))
-		}
+		delta = delta + (int(minRune)-n)*(h+1) // ?? 
+		n = int(minRune)
 
-		delta = delta + (m-n)*(h+1)
-		n = m
-
-		for j := 0; j < input_s.RuneCount(); j++ {
-			var c int = input_s.At(j)
-			if c < n {
+		for i := 0; i < len(runes); i++ {
+			if int(runes[i]) < n {
 				delta++
-				if 0 == delta {
-					return "", os.NewError(string(OVERFLOW))
-				}
 			}
-
-			if c == n {
-				var q int = delta
-
-				var k int
-				for k = BASE; true; k += BASE {
+			if int(runes[i]) == n {
+				q := delta
+				for k := Base; true; k += Base {
 					var t int
 
-					if k <= bias {
-						t = TMIN
-					} else if k >= (bias + TMAX) {
-						t = TMAX
-					} else {
+					switch {
+					case k <= bias:
+						t = TMin
+						break
+					case k >= (bias + TMax):
+						t = TMax
+						break
+					default:
 						t = k - bias
 					}
 
@@ -122,143 +107,126 @@ func ToASCII(input string) (string, os.Error) {
 						break
 					}
 
-					var err os.Error
-					var nbyte int
-					nbyte, err = digit2codepoint(t + (q-t)%(BASE-t))
-
+					cp := digit2codepoint(t + (q-t)%(Base-t))
+					err = result.WriteByte(byte(cp))
 					if err != nil {
-						return "", err
+						return nil, err
 					}
-
-					output = append(output, byte(nbyte))
-					q = (q - t) / (BASE - t)
-
+					q = (q - t) / (Base - t)
 				}
+				cp := digit2codepoint(q)
+				err = result.WriteByte(byte(cp))
 
-				var err os.Error
-				var nbyte int
-				nbyte, err = digit2codepoint(q)
-
-				if err != nil {
-					return "", err
-				}
-
-				output = append(output, byte(nbyte))
-				bias = adapt(delta, h == b, h+1)
+				bias = adapt(delta, h == basicRunes, h+1)
 				delta = 0
 				h++
-
 			}
 		}
-
 		delta++
 		n++
 	}
-	
-
-	return string(output[0:(len(output))]), nil
+	return result.Bytes(), nil
 }
 
+func DecodeString(s string) (string, error) {
+	p, err := Decode([]byte(s))
+	if err != nil {
+		return "", err
+	}
+	return string(p), nil
+}
 
-// ToUnicode takes a punycoded string and returns the decoded string and a nil os.Error when successful.
-func ToUnicode(input string) (string, os.Error) {
-	var n int = INITIAL_N
-	var i int = 0
-	var bias int = INITIAL_BIAS
+// Decode returns the UTF-8 
+func Decode(b []byte) (p []byte, err error) {
+	// Decoding procedure explained in detail in RFC 3492.
+	n := InitialN
+	i := 0
+	bias := InitialBias
 
-	input_s := utf8.NewString(input) 
-	var output []int  = make([]int, 0, len(input))
+	pos := 0
+	delimIndex := -1
 
+	result := make([]rune, 0, len(b))
 
-	
-	var d int = strings.LastIndex(input, string(DELIMITER))
-	if d > 0 {
-		// Assert that characters before DELIMITER are ASCII
-		// TODO: Clarify
-		for j := 0; j < d; j++ {
-			if !isBasic(input_s.At(j)) {
-				return "", os.NewError(BAD_INPUT)
-			}
-			output = addCP(output, input_s.At(j))
+	// Only ASCII allowed in decoding procedure
+	for j := 0; j < len(b); j++ {
+		if b[j] >= 0x80 {
+			err = errors.New("Non-ASCCI codepoint found in b")
+			return
 		}
-		d++
-
-	} else {
-		d = 0
 	}
 
-	for d < input_s.RuneCount() {
-		
-		var (
-			oldi int = i
-			w int = 1
-			k int
-		)
-		
-		for k = BASE; true; k += BASE {
-			if d == input_s.RuneCount() {
-				return "", os.NewError(BAD_INPUT)
+	// Consume all codepoints before the last delimiter
+	delimIndex = bytes.LastIndex(b, []byte{Delimiter})
+	for pos = 0; pos < delimIndex; pos++ {
+		result = append(result, rune(b[pos]))
+	}
+
+	// Consume delimiter
+	pos = delimIndex + 1
+
+	for pos < len(b) {
+		oldi := i
+		w := 1
+		for k := Base; true; k += Base {
+			var t int
+
+			if pos == len(b) {
+				return nil, errors.New("Bad Input")
 			}
 
-			var c int = input_s.At(d)
-			d++
+			// consume a code point, or fail if there was none to consume
+			cp := rune(b[pos])
+			pos++
 
-			var (
-				err os.Error
-				digit int
-			)
-			digit, err = codepoint2digit(c)
+			digit := codepoint2digit(cp)
 
-			if err != nil {
-				return "", err
-			}
-
-			if digit > ((MAXINT_S - i) / w) {
-				return "", os.NewError(OVERFLOW + " line 202")
+			if digit > ((MaxRune - i) / w) {
+				return nil, errors.New("Bad Input")
 			}
 
 			i = i + digit*w
 
-			var t int
-			if k <= bias {
-				t = TMIN
-			} else if k >= bias+TMAX {
-				t = TMAX
-			} else {
+			switch {
+			case k <= bias:
+				t = TMin
+				break
+			case k >= bias+TMax:
+				t = TMax
+				break
+			default:
 				t = k - bias
 			}
 
 			if digit < t {
 				break
 			}
-			w = w * (BASE - t)
+			w = w * (Base - t)
+		}
+		bias = adapt(i-oldi, oldi == 0, len(result)+1)
 
+		if i/(len(result)+1) > (MaxRune - n) {
+			return nil, errors.New("Overflow")
 		}
 
-		bias = adapt(i-oldi, oldi == 0, len(output)+1)
+		n = n + i/(len(result)+1)
+		i = i % (len(result) + 1)
 
-		if i/(len(output)+1) > (MAXINT_S - n) {
-			return "", os.NewError(OVERFLOW + " line 226")
+		if n < 0x80 {
+			panic("n is a basic code point")
 		}
 
-		n = n + i/(len(output)+1)
-		i = i % (len(output) + 1)
-
-		output = insert(output, i, n)
+		result = insert(result, i, rune(n))
 		i++
 	}
-	
 
-	
-	return string(output), nil
+	return writeRune(result), nil
 }
 
-
-
-// Bias adaption function as described in RFC 3492 - 6.1
-func adapt(delta int, first bool, numchars int) int {
+// Bias adaption function from RFC 3492 - 6.1
+func adapt(delta int, first bool, numchars int) (bias int) {
 	if first {
-		delta = delta / DAMP
+		delta = delta / Damp
 	} else {
 		delta = delta / 2
 	}
@@ -266,136 +234,50 @@ func adapt(delta int, first bool, numchars int) int {
 	delta = delta + (delta / numchars)
 
 	var k int = 0
-	for delta > ((BASE-TMIN)*TMAX)/2 {
-		delta = delta / (BASE - TMIN)
-		k = k + BASE
+	for delta > ((Base-TMin)*TMax)/2 {
+		delta = delta / (Base - TMin)
+		k = k + Base
 	}
-	var bias int = k + ((BASE-TMIN+1)*delta)/(delta+SKEW)
-	return bias
+	bias = k + ((Base-TMin+1)*delta)/(delta+Skew)
+	return
 }
-
-// Returns true if c < 128 (is a basic ASCII code point)
-func isBasic(c int) bool {
-	return c < 0x80
-}
-
 
 // codepoint2digit(cp) returns the numeric value of a basic rune
 // (for use in representing integers) in the range 0 to 
 // base-1, or base if cp does not represent a value.          
-func codepoint2digit(cp int) (int, os.Error) {
-	if cp-48 < 10 {
-		// '0'..'9' : 26..35
-		return cp - 22, nil
-	} else if cp-65 < 26 {
-		// 'a'..'z' : 0..25
-		return cp - 65, nil
-	} else if cp-97 < 26 {
-		return cp - 97, nil
-	} else {
-		return BASE, nil
+func codepoint2digit(r rune) int {
+	switch {
+	case r-48 < 10:
+		return int(r - 22)
+	case r-65 < 26:
+		return int(r - 65)
+	case r-97 < 26:
+		return int(r - 97)
 	}
-	// else Bad input
-	return -1, os.NewError(BAD_INPUT)
+	return Base
 }
 
 // Returns the rune and a non-nil Error when d < 36.
 // Else it returns (unicode.MaxRune + 1) and a BadInputError
-func digit2codepoint(d int) (int, os.Error) {
-
-	if d < 26 {
+func digit2codepoint(d int) rune {
+	switch {
+	case d < 26:
 		// 0..25 : 'a'..'z'
-		return d + 'a', nil
-	} else if d < 36 {
+		return rune(d + 'a')
+	case d < 36:
 		// 26..35 : '0'..'9';
-		return d - 26 + '0', nil
+		return rune(d - 26 + '0')
 	}
-	// else Bad input!
-	return -1, os.NewError(BAD_INPUT)
+	panic("digit2codepoint")
+	return -1
 }
 
-
-// addCP appends  unicode cp  b to the end of s and returns the result.
-// If s has enough capacity, it is extended in place; otherwise a
-// new array is allocated and returned.
-func addCP(s []int, t int) []int {
-	lens := len(s)
-	if lens+1 <= cap(s) {
-		s = s[0 : lens+1]
-	} else {
-		news := make([]int, lens+1, resize(lens+1))
-		copy(news, s)
-		s = news
-	}
-	s[lens] = t
-	return s
+func writeRune(r []rune) []byte {
+	str := string(r)
+	return []byte(str)
 }
 
-// How big to make a byte array when growing.
-// Heuristic: Scale by 50% to give n log n time.
-func resize(n int) int {
-	if n < 16 {
-		n = 16
-	}
-	return n + n/2
-}
-
-
-func insert(s []int, pos int, cp int) []int {
-	lens:=len(s)
-	a := s[0:pos]
-	b := s[pos:]
-	
-	news := make([]int, lens+1, resize(lens+1))
-	copy(news[0:], a)
-	news[pos] = cp
-	copy(news[pos+1:], b)
-	
-	s = news
-	
-	return s
-}
-/*
-func insert(s []int, pos int, cp int) []int {
-	lens:=len(s)
-	a := s[0:pos]
-	b := s[pos:]
-	
-	news := make([]int, lens+1, resize(lens+1))
-	copy(news[0:], a)
-	news[pos] = cp
-	copy(news[pos+1:], b)
-	
-	s=news
-	
-	return s
-}*/
-
-func lastIndex(s []int, sep int) int {
-	last := -1
-	for i:=0;i<len(s);i++ {
-		if s[i] == sep {
-			last = i
-		}
-	}
-	return last
-}
-
-// turn a slice of runes into an equivalent string
-func stringify(runes []int) string {
-	t := make([]byte, len(runes)*4) // kludge!
-	i := 0
-	for _, r := range runes {
-		i += utf8.EncodeRune(t[i:], r)
-	}
-	return string(t)
-}
-
-func runify(str string) []int {
-	t := make([]int, len(str))
-	//i:=0
-	for i, s:= range str {
-		t[i]=s
-	}
-	return t
+// Inserts r into s at pos
+func insert(s []rune, pos int, r rune) []rune {
+	return append(s[:pos], append([]rune{r}, s[pos:]...)...)
 }
