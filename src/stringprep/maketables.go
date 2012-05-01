@@ -4,6 +4,8 @@
 
 // This file is part of go-idn
 
+// +build ignore
+
 // Stringprep table generator
 
 package main

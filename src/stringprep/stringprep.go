@@ -8,8 +8,8 @@
 package stringprep
 
 import (
-	"go-idn.googlecode.com/hg/src/normalization"
-	"utf8"
+	"code.google.com/p/go-idn/src/normalization"
+	"unicode/utf8"
 	"bytes"
 )
 
@@ -106,7 +106,7 @@ func Stringprep(input string, profile Profile) string {
 
 // Prepare the input rune array according to the stringprep profile,
 // and return the results as a rune array.
-func StringprepRunes(input []int, profile Profile) []int {
+func StringprepRunes(input [], profile Profile) []int {
 	output := make([]int, len(input))
 	copy(output[0:], input[0:])
 
