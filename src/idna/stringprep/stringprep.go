@@ -13,13 +13,7 @@ import (
 	"code.google.com/p/go-idn/src/norm"
 )
 
-type Profile struct {
-	AllowUnassigned bool
-	Map []Table
-	Normalize bool
-	Prohibit []Table
-	
-}
+
 type MapTable []CaseRange
 
 value = data[index [cp>>LOWER_WIDTH] + (cp&LOWER_MASK)]
@@ -37,7 +31,7 @@ func (t *Table) map(b []byte) []byte {
 	
 }
 
-func (p *Profile) Prep(b []byte) (result []byte, err error) {
+func Prep(profile string, b []byte) (result []byte, err error) {
 	
 	
 	// Step 1. Map -- For each character in the input, check if it has a mapping

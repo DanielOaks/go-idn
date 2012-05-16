@@ -1,13 +1,29 @@
 package stringprep
 
-var _nameprep = &Profile{
-	Map: []Table{_B1, _B2}
-	Normalize: true
-	Prohibit: []Table{_C12, _C22, _C3, _C4, _C5, _C6, _C7, _C8, _C9}
+import (
+	"fmt"
+)
+
+
+type Profile struct {
+	AllowUnassigned bool
+	Map []Table
+	Normalize bool
+	Prohibit []Table	
+}
+
+var ErrProfile = errors.New("stringprep: unknown profile")
+
+// Profiles is the list of registered profiles.
+var profiles = make(map[string]&Profile)
+
+// RegisterProfile resgisters a profile for use by Prep. Name is the name of the profile, like "nameprep" or "saslprep". 
+// Profile is a reference to the Profile containing the Stringprep tables.
+func RegisterProfile(name string, profile &Profile) {
+	_, exists := profiles[name]; exists{
+		panic(fmt.Sprintf("stringprep: a profile named %v has already been registered", name))
+	}
 	
-	ProfileElement{BIDI, nil},
-	ProfileElement{BIDI_PROHIBIT_TABLE, _C8},
-	ProfileElement{BIDI_RAL_TABLE, _D1},
-	ProfileElement{BIDI_L_TABLE, _D2},
-	ProfileElement{UNASSIGNED_TABLE, _A1},
+	profiles[name] = profile
+	return
 }
