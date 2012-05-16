@@ -22,6 +22,8 @@ type Profile struct {
 }
 type MapTable []CaseRange
 
+value = data[index [cp>>LOWER_WIDTH] + (cp&LOWER_MASK)]
+
 type Table struct {
 }
 
@@ -41,17 +43,17 @@ func (p *Profile) Prep(b []byte) (result []byte, err error) {
 	// Step 1. Map -- For each character in the input, check if it has a mapping
 	// and, if so, replace it with its mapping
 	for table := range p.Map {
-		b := table.map(b)
+		b = table.map(b)
 	}
 	
 	// Step 2. Normalize -- Possibly normalizez the result of step 1 
 	// using Unicode normalization
 	if p.Normalize {
-		norm.NFKC.Bytes()
+		norm.NFKC.Bytes(b)
 	}
 	
-	// Step 3. Prohibit -- Check if any characters that are not allowed in the
-	// output. If any are found, return an error.
+	// Step 3. Prohibit -- Check if any characters that are not allowed are 
+	// in the output. If any are found, return an error.
 	
 	// Step 4. Check bidi -- Possibly check for right-to-left characters, 
 	// and if any are found, make sure that the whole string satisfies the
