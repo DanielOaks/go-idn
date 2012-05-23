@@ -15,8 +15,6 @@ func init() {
 }
 
 // Alias is the name that nameprep is registered to with stringprep
-const Alias "nameprep"
+const Alias = "nameprep"
 
-var prof = &stringprep.Profile{
-	
-}
+var prof = &stringprep.Profile{}

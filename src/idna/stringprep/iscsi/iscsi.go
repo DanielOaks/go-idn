@@ -15,7 +15,7 @@ func init() {
 }
 
 // Alias is the name that iSCSI is registered to with stringprep
-const Alias "iscsi"
+const Alias = "iscsi"
 
 var prof = &stringprep.Profile{
 	
