@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package norm contains types and functions for normalizing Unicode strings.
+// Package norm32 contains types and functions for normalizing Unicode 3.2 strings.
 package norm
 
 import "unicode/utf8"
