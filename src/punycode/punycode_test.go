@@ -132,7 +132,6 @@ func TestDecode(t *testing.T) {
 			ut_len += utf8.EncodeRune(str, rune)
 			ut = append(ut, str...)
 		}
-		
 
 		var out []byte
 		var err error = nil
