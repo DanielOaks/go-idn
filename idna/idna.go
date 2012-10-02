@@ -22,7 +22,6 @@ const (
 	ACE_PREFIX = "xn--"
 )
 
-
 //
 // Converts a Unicode string to ASCII using the procedure in RFC 3490
 // section 4.1. Unassigned characters are not allowed and STD3 ASCII
