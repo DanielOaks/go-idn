@@ -8,7 +8,7 @@
 package stringprep
 
 import (
-	"code.google.com/p/go-idn/src/normalization"
+	"code.google.com/p/go-idn/src/norm32"
 	"unicode/utf8"
 	"bytes"
 )
