@@ -8,9 +8,9 @@
 package stringprep
 
 import (
+	"bytes"
 	"code.google.com/p/go-idn/idna/norm32"
 	"unicode/utf8"
-	"bytes"
 )
 
 // Flags used when calling stringprep
@@ -36,7 +36,6 @@ const (
 	MAX_MAP_CHARS = 4
 )
 
-
 type TableElement struct {
 	Lo  int
 	Hi  int
@@ -51,7 +50,6 @@ type ProfileElement struct {
 	Step  int // see Step const's
 	Table Table
 }
-
 
 // Exports tables
 var Tables = map[string]Table{
@@ -98,7 +96,6 @@ func ResourceprepRunes(label []int) []int {
 	return StringprepRunes(label, Profiles["resourceprep"])
 }
 
-
 func Stringprep(input string, profile Profile) string {
 	input_runes := bytes.Runes([]byte(input))
 	return stringify(StringprepRunes(input_runes, profile))
@@ -106,7 +103,7 @@ func Stringprep(input string, profile Profile) string {
 
 // Prepare the input rune array according to the stringprep profile,
 // and return the results as a rune array.
-func StringprepRunes(input [], profile Profile) []int {
+func StringprepRunes(input []rune, profile Profile) []int {
 	output := make([]int, len(input))
 	copy(output[0:], input[0:])
 
@@ -190,7 +187,6 @@ func StringprepRunes(input [], profile Profile) []int {
 	return output
 }
 
-
 // Returns true if the rune is in table 
 func in_table(c int, table Table) bool {
 	for i := 0; i < len(table); i++ {
@@ -240,7 +236,6 @@ func map_table(input []int, table Table) []int {
 	}
 	return output[0:len(output)]
 }
-
 
 // turn a slice of runes into an equivalent string 
 func stringify(runes []int) string {

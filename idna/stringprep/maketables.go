@@ -10,7 +10,6 @@
 
 package main
 
-
 import (
 	"bufio"
 	"flag"
@@ -24,7 +23,6 @@ import (
 	//	"regexp"
 	//	"unicode"
 )
-
 
 func main() {
 	printHeader()
@@ -47,7 +45,6 @@ func printHeader() {
 	//	fmt.Printf("\t\"unicode\"\n")
 	//	fmt.Printf(")\n\n")
 }
-
 
 func loadChars() {
 	if *rfc3454URL == "" {
@@ -85,7 +82,6 @@ func loadChars() {
 			// Start of a table
 			var tname []string = strings.Fields(line)
 			t = tname[3] // table name
-
 
 			if "A.1" == t {
 				fmt.Printf("var _A1 = Table { \n")

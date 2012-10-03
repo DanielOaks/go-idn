@@ -2,7 +2,6 @@
 // maketables
 // DO NOT EDIT
 
-
 package stringprep
 
 var _A1 = Table{
@@ -404,7 +403,6 @@ var _A1 = Table{
 	TableElement{0x0E0080, 0x0EFFFD, d{}}, /* E0080-EFFFD  */
 }
 
-
 var _B1 = Table{
 	TableElement{0x0000AD, 0, d{}}, /* 00AD; ; Map to nothing */
 	TableElement{0x00034F, 0, d{}}, /* 034F; ; Map to nothing */
@@ -434,7 +432,6 @@ var _B1 = Table{
 	TableElement{0x00FE0F, 0, d{}}, /* FE0F; ; Map to nothing */
 	TableElement{0x00FEFF, 0, d{}}, /* FEFF; ; Map to nothing */
 }
-
 
 var _B2 = Table{
 	TableElement{0x000041, 0, d{0x000061}},                               /* 0041; 0061; Case map */
@@ -1810,7 +1807,6 @@ var _B2 = Table{
 	TableElement{0x01D7BB, 0, d{0x0003C3}},                               /* 1D7BB; 03C3; Additional folding */
 }
 
-
 var _B3 = Table{
 	TableElement{0x000041, 0, d{0x000061}},                     /* 0041; 0061; Case map */
 	TableElement{0x000042, 0, d{0x000062}},                     /* 0042; 0062; Case map */
@@ -2652,11 +2648,9 @@ var _B3 = Table{
 	TableElement{0x010425, 0, d{0x01044D}},                     /* 10425; 1044D; Case map */
 }
 
-
 var _C11 = Table{
 	TableElement{0x000020, 0x000020, d{}}, /* 0020; SPACE  */
 }
-
 
 var _C12 = Table{
 	TableElement{0x0000A0, 0x0000A0, d{}}, /* 00A0; NO-BREAK SPACE  */
@@ -2678,12 +2672,10 @@ var _C12 = Table{
 	TableElement{0x003000, 0x003000, d{}}, /* 3000; IDEOGRAPHIC SPACE  */
 }
 
-
 var _C21 = Table{
 	TableElement{0x000000, 0x00001F, d{}}, /* 0000-001F; [CONTROL CHARACTERS]  */
 	TableElement{0x00007F, 0x00007F, d{}}, /* 007F; DELETE  */
 }
-
 
 var _C22 = Table{
 	TableElement{0x000080, 0x00009F, d{}}, /* 0080-009F; [CONTROL CHARACTERS]  */
@@ -2704,13 +2696,11 @@ var _C22 = Table{
 	TableElement{0x01D173, 0x01D17A, d{}}, /* 1D173-1D17A; [MUSICAL CONTROL CHARACTERS]  */
 }
 
-
 var _C3 = Table{
 	TableElement{0x00E000, 0x00F8FF, d{}}, /* E000-F8FF; [PRIVATE USE, PLANE 0]  */
 	TableElement{0x0F0000, 0x0FFFFD, d{}}, /* F0000-FFFFD; [PRIVATE USE, PLANE 15]  */
 	TableElement{0x100000, 0x10FFFD, d{}}, /* 100000-10FFFD; [PRIVATE USE, PLANE 16]  */
 }
-
 
 var _C4 = Table{
 	TableElement{0x00FDD0, 0x00FDEF, d{}}, /* FDD0-FDEF; [NONCHARACTER CODE POINTS]  */
@@ -2733,11 +2723,9 @@ var _C4 = Table{
 	TableElement{0x10FFFE, 0x10FFFF, d{}}, /* 10FFFE-10FFFF; [NONCHARACTER CODE POINTS]  */
 }
 
-
 var _C5 = Table{
 	TableElement{0x00D800, 0x00DFFF, d{}}, /* D800-DFFF; [SURROGATE CODES]  */
 }
-
 
 var _C6 = Table{
 	TableElement{0x00FFF9, 0x00FFF9, d{}}, /* FFF9; INTERLINEAR ANNOTATION ANCHOR  */
@@ -2747,11 +2735,9 @@ var _C6 = Table{
 	TableElement{0x00FFFD, 0x00FFFD, d{}}, /* FFFD; REPLACEMENT CHARACTER  */
 }
 
-
 var _C7 = Table{
 	TableElement{0x002FF0, 0x002FFB, d{}}, /* 2FF0-2FFB; [IDEOGRAPHIC DESCRIPTION CHARACTERS]  */
 }
-
 
 var _C8 = Table{
 	TableElement{0x000340, 0x000340, d{}}, /* 0340; COMBINING GRAVE TONE MARK  */
@@ -2771,9 +2757,7 @@ var _C8 = Table{
 	TableElement{0x00206F, 0x00206F, d{}}, /* 206F; NOMINAL DIGIT SHAPES  */
 }
 
-
 var _C9 = Table{}
-
 
 var _D1 = Table{
 	TableElement{0x0005BE, 0x0005BE, d{}}, /* 05BE  */
@@ -2811,7 +2795,6 @@ var _D1 = Table{
 	TableElement{0x00FE70, 0x00FE74, d{}}, /* FE70-FE74  */
 	TableElement{0x00FE76, 0x00FEFC, d{}}, /* FE76-FEFC  */
 }
-
 
 var _D2 = Table{
 	TableElement{0x000041, 0x00005A, d{}}, /* 0041-005A  */

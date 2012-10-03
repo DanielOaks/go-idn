@@ -6,7 +6,6 @@
 
 package stringprep
 
-
 import (
 	// "fmt"
 	// "reflect"

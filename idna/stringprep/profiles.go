@@ -167,7 +167,6 @@ var _iscsi_prohibit = Table{
 	TableElement{0x007B, 0x007F, d{}}, /* [ASCII { through DEL] */
 }
 
-
 var _saslprep_space_map = Table{
 	TableElement{0x0000A0, 0x0000A0, d{0x0020}}, /* 00A0; NO-BREAK SPACE */
 	TableElement{0x001680, 0x001680, d{0x0020}}, /* 1680; OGHAM SPACE MARK */
@@ -187,7 +186,6 @@ var _saslprep_space_map = Table{
 	TableElement{0x00205F, 0x00205F, d{0x0020}}, /* 205F; MEDIUM MATHEMATICAL SPACE */
 	TableElement{0x003000, 0x003000, d{0x0020}}, /* 3000; IDEOGRAPHIC SPACE */
 }
-
 
 var _nodeprep_prohibit = Table{
 	TableElement{0x000022, 0x000022, d{}}, /* #x22 (") */
