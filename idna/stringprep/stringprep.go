@@ -13,6 +13,16 @@ import (
 	"unicode/utf8"
 )
 
+// InvalidStringError represents an invalid string error in the input stream.
+type InvalidStringError struct {
+	// TODO: What should we report?
+}
+
+func (e InvalidString) Error() string {
+	panic("TODO")
+	return "Invalid string"
+}
+
 // Flags used when calling stringprep
 const (
 	NO_NFKC       = 1
