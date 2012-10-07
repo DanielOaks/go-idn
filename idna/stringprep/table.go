@@ -51,7 +51,7 @@ func filter(input []int, table Table) []int {
 		}
 	}
 
-	return output[0:len(output)]
+	return output[0:]
 }
 
 // Iterates over the input rune array and replaces runes with their maps
@@ -76,5 +76,5 @@ func map_table(input []int, table Table) []int {
 		}
 
 	}
-	return output[0:len(output)]
+	return output[0:]
 }
