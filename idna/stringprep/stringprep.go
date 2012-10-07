@@ -31,7 +31,20 @@ const (
 //
 // For a Profile p, this documentation uses the notation p(x) to mean the bytes
 // or string x prepared with the given profile.
-type Profile struct{}
+type Profile struct {
+	// Defaults to true
+	Normalize bool
+
+	// Defaults to false
+	AllowUnassigned bool
+
+	// Defined by profile
+	CheckBidi bool
+
+	f          norm32.Form
+	mappings   Table
+	prohibited Table
+}
 
 // Append returns p(append(out, b...)). The buffer out must be nil, empty or
 // equal to p(out).
