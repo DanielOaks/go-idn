@@ -63,30 +63,6 @@ var Tables = map[string]Table{
 	"D2":  _D2,
 }
 
-func Nameprep(label string) string {
-	return Stringprep(label, Profiles["nameprep"])
-}
-
-func Nodeprep(label string) string {
-	return Stringprep(label, Profiles["nodeprep"])
-}
-
-func Resourceprep(label string) string {
-	return Stringprep(label, Profiles["resourceprep"])
-}
-
-func NameprepRunes(label []int) []int {
-	return StringprepRunes(label, Profiles["nameprep"])
-}
-
-func NodeprepRunes(label []int) []int {
-	return StringprepRunes(label, Profiles["nodeprep"])
-}
-
-func ResourceprepRunes(label []int) []int {
-	return StringprepRunes(label, Profiles["resourceprep"])
-}
-
 func Stringprep(input string, profile Profile) string {
 	input_runes := bytes.Runes([]byte(input))
 	return stringify(StringprepRunes(input_runes, profile))
