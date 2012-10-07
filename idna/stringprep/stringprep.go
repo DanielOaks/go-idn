@@ -27,7 +27,35 @@ const (
 	MAX_MAP_CHARS = 4
 )
 
-type Profile []ProfileElement
+// A Profile...
+//
+// For a Profile p, this documentation uses the notation p(x) to mean the bytes
+// or string x prepared with the given profile.
+type Profile struct{}
+
+// Append returns p(append(out, b...)). The buffer out must be nil, empty or
+// equal to p(out).
+func (p *Profile) Append(out []byte, src ...byte) []byte { return nil }
+
+// AppendString returns p(append(out, []byte(s))). The buffer out must be nil, 
+//empty, or equal to p(out).
+func (p *Profile) AppendString(out []byte, src string) []byte { return nil }
+
+// Bytes returns p(b). May return b if p(b) = b.
+func (p *Profile) Bytes(b []byte) []byte { return nil }
+
+// Reader returns a new reader that implements Read by reading data from r and
+// returning p(data).
+func (p *Profile) Reader(r io.Reader) io.Reader { return nil }
+
+// String returns p(s).
+func (p *Profile) String(s string) string { return "" }
+
+// Writer returns a new writer that implements Write(b) by writing p(b) to w.
+// The returned writer may use an an internal buffer to maintain state across
+// Write calls. Calling its Close method writes any buffered data to w.
+func (p *Profile) Writer(w io.Writer) io.WriteCloser { return nil }
+
 type d [MAX_MAP_CHARS]int
 
 type ProfileElement struct {
