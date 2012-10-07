@@ -18,7 +18,7 @@ type InvalidStringError struct {
 	// TODO: What should we report?
 }
 
-func (e InvalidString) Error() string {
+func (e InvalidStringError) Error() string {
 	panic("TODO")
 	return "Invalid string"
 }
