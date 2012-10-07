@@ -23,25 +23,6 @@ func (e InvalidString) Error() string {
 	return "Invalid string"
 }
 
-// Flags used when calling stringprep
-const (
-	NO_NFKC       = 1
-	NO_BIDI       = 2
-	NO_UNASSIGNED = 4
-)
-
-/* Steps in a stringprep profile. */
-const (
-	NFKC                = 1
-	BIDI                = 2
-	MAP_TABLE           = 3
-	UNASSIGNED_TABLE    = 4
-	PROHIBIT_TABLE      = 5
-	BIDI_PROHIBIT_TABLE = 6
-	BIDI_RAL_TABLE      = 7
-	BIDI_L_TABLE        = 8
-)
-
 const (
 	MAX_MAP_CHARS = 4
 )
