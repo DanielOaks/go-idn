@@ -4,7 +4,7 @@
 
 // This file is part of go-idn
 
-// This package contains methods for the preparation of internationalized strings ("stringprep") as described in RFC 3454
+// Package stringprep implements Stringprep as described in RFC 3454
 package stringprep
 
 import (
