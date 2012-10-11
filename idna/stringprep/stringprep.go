@@ -10,6 +10,7 @@ package stringprep
 import (
 	"bytes"
 	"code.google.com/p/go-idn/idna/norm32"
+	"io"
 	"unicode/utf8"
 )
 
@@ -68,18 +69,6 @@ func (p *Profile) String(s string) string { return "" }
 // The returned writer may use an an internal buffer to maintain state across
 // Write calls. Calling its Close method writes any buffered data to w.
 func (p *Profile) Writer(w io.Writer) io.WriteCloser { return nil }
-
-type d [MAX_MAP_CHARS]int
-
-type ProfileElement struct {
-	Step  int // see Step const's
-	Table Table
-}
-
-func Stringprep(input string, profile Profile) string {
-	input_runes := bytes.Runes([]byte(input))
-	return stringify(StringprepRunes(input_runes, profile))
-}
 
 // Prepare the input rune array according to the stringprep profile,
 // and return the results as a rune array.
@@ -165,14 +154,4 @@ func StringprepRunes(input []rune, profile Profile) []int {
 	}
 
 	return output
-}
-
-// turn a slice of runes into an equivalent string 
-func stringify(runes []int) string {
-	t := make([]byte, len(runes)*4) // kludge! 
-	i := 0
-	for _, r := range runes {
-		i += utf8.EncodeRune(t[i:], r)
-	}
-	return string(t)
 }
