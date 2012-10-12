@@ -199,3 +199,11 @@ func toUnicodeRaw(label string) (string, os.Error) {
 
 	return original, os.NewError("Failed verification step")
 }
+
+// returns true if c is a label separator
+func isSeparator(c rune) bool {
+	if c == 0x02E || c == 0x3002 || c == 0xFF0E || c == 0xFF61 {
+		return true
+	}
+	return false
+}
