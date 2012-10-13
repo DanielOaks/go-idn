@@ -8,7 +8,7 @@
 package stringprep
 
 import (
-	"bytes"
+	//"bytes"
 	"code.google.com/p/go-idn/idna/norm32"
 	"io"
 	"unicode/utf8"
@@ -47,6 +47,8 @@ type Profile struct {
 	prohibited Table
 }
 
+/*
+
 // Append returns p(append(out, b...)). The buffer out must be nil, empty or
 // equal to p(out).
 func (p *Profile) Append(out []byte, src ...byte) []byte { return nil }
@@ -69,7 +71,7 @@ func (p *Profile) String(s string) string { return "" }
 // The returned writer may use an an internal buffer to maintain state across
 // Write calls. Calling its Close method writes any buffered data to w.
 func (p *Profile) Writer(w io.Writer) io.WriteCloser { return nil }
-
+*/
 // Prepare the input rune array according to the stringprep profile,
 // and return the results as a rune array.
 func StringprepRunes(input []rune, profile Profile) []int {

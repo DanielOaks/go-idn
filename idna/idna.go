@@ -19,15 +19,12 @@ import (
 
 // IDNA section 5
 const (
-	ACE_PREFIX = "xn--"
+	AcePrefix = "xn--"
 )
 
-//
 // Converts a Unicode string to ASCII using the procedure in RFC 3490
-// section 4.1. Unassigned characters are not allowed and STD3 ASCII
-// rules are enforced. The input string may be a domain name
-// containing dots.
-//
+// section 4.1. Unassigned characters are not allowed and STD3 ASCII rules are 
+// enforced. The input string may be a domain name containing dots.
 func ToASCII(label string) (string, os.Error) {
 
 	label = strings.ToLower(label)
@@ -96,7 +93,7 @@ func toASCIIRaw(label string) (string, os.Error) {
 	if !isASCII {
 
 		// Step 5 Verify that the sequence does NOT begin with the ACE prefix.
-		if strings.HasPrefix(label, ACE_PREFIX) {
+		if strings.HasPrefix(label, AcePrefix) {
 			return label, os.NewError("Label starts with ACE prefix")
 		}
 
@@ -108,7 +105,7 @@ func toASCIIRaw(label string) (string, os.Error) {
 			return "", err // delegate err
 		}
 		// Step 7: Prepend ACE prefix
-		label = ACE_PREFIX + label
+		label = AcePrefix + label
 	}
 
 	// 8. Verify that the number of code points is in the range 1 to 63 inclusive.
@@ -169,12 +166,12 @@ func toUnicodeRaw(label string) (string, os.Error) {
 	}
 
 	// Step 3: Verify that the sequence begins with the ACE prefix, and save a copy of the sequence.
-	if !strings.HasPrefix(label, ACE_PREFIX) {
+	if !strings.HasPrefix(label, AcePrefix) {
 		return label, os.NewError("Label doesn't begin with the ACE prefix")
 	} // else
 
 	// 4. Remove the ACE prefix.
-	label = strings.SplitN(label, ACE_PREFIX, -1)[1]
+	label = strings.SplitN(label, AcePrefix, -1)[1]
 
 	// 5. Decode the sequence using the decoding algorithm in [PUNYCODE] and fail if there is an error. 
 	//fmt.Printf(label+"\n")
@@ -200,7 +197,7 @@ func toUnicodeRaw(label string) (string, os.Error) {
 	return original, os.NewError("Failed verification step")
 }
 
-// returns true if c is a label separator
+// Returns true if c is a label separator as defined by section 3.1 in RFC 3490
 func isSeparator(c rune) bool {
 	if c == 0x02E || c == 0x3002 || c == 0xFF0E || c == 0xFF61 {
 		return true
