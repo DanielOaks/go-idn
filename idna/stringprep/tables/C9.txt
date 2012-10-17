@@ -1,0 +1,5 @@
+
+   ----- Start Table C.9 -----
+   E0001; LANGUAGE TAG
+   E0020-E007F; [TAGGING CHARACTERS]
+   ----- End Table C.9 -----
