@@ -1,4 +1,0 @@
-   ----- Start Table C.2.1 -----
-   0000-001F; [CONTROL CHARACTERS]
-   007F; DELETE
-   ----- End Table C.2.1 -----

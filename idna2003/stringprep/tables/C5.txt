@@ -1,3 +1,0 @@
-  ----- Start Table C.5 -----
-   D800-DFFF; [SURROGATE CODES]
-   ----- End Table C.5 -----

@@ -1,3 +1,0 @@
-   ----- Start Table C.7 -----
-   2FF0-2FFB; [IDEOGRAPHIC DESCRIPTION CHARACTERS]
-   ----- End Table C.7 -----

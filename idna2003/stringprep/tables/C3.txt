@@ -1,5 +1,0 @@
-   ----- Start Table C.3 -----
-   E000-F8FF; [PRIVATE USE, PLANE 0]
-   F0000-FFFFD; [PRIVATE USE, PLANE 15]
-   100000-10FFFD; [PRIVATE USE, PLANE 16]
-   ----- End Table C.3 -----
