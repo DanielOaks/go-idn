@@ -23,7 +23,7 @@ const (
 // Converts a Unicode string to ASCII using the procedure in RFC 3490
 // section 4.1. Unassigned characters are not allowed and STD3 ASCII rules are 
 // enforced. The input string may be a domain name containing dots.
-func ToASCII(label string) (string, os.Error) {
+func ToASCII(label string) (string, error) {
 
 	label = strings.ToLower(label)
 	o := ""
@@ -51,7 +51,7 @@ func ToASCII(label string) (string, os.Error) {
 	return o, nil
 }
 
-func toASCIIRaw(label string) (string, os.Error) {
+func toASCIIRaw(label string) (string, error) {
 	original := label
 
 	// Step 1: If the sequence contains any code points outside the ASCII range
@@ -95,7 +95,7 @@ func toASCIIRaw(label string) (string, os.Error) {
 			return label, os.NewError("Label starts with ACE prefix")
 		}
 
-		var err os.Error
+		var err error
 
 		// Step 6: Encode with punycode
 		label, err = punycode.ToASCII(label)
@@ -122,7 +122,7 @@ func toASCIIRaw(label string) (string, os.Error) {
 //
 // ToUnicode never fails.  If any step fails, then the original input
 // sequence is returned immediately in that step.
-func ToUnicode(label string) (string, os.Error) {
+func ToUnicode(label string) (string, error) {
 
 	label = strings.ToLower(label)
 	o := ""
@@ -150,7 +150,7 @@ func ToUnicode(label string) (string, os.Error) {
 	return o, nil
 }
 
-func toUnicodeRaw(label string) (string, os.Error) {
+func toUnicodeRaw(label string) (string, error) {
 
 	original := label
 
