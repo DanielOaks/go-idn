@@ -4,14 +4,12 @@
 
 // This file is part of go-idn
 
-// This package implements a mechanism called  IDNA for handling
-// International Domain Names (IDN) in applications in a standard fashion 
-// as described RFC 3490
-package idna
+// Package idna2003 implements IDNA as described in RFC 3490.
+package idna2003
 
 import (
-	"code.google.com/p/go-idn/idna/punycode"
-	"code.google.com/p/go-idn/idna/stringprep"
+	"code.google.com/p/go-idn/idna2003/punycode"
+	"code.google.com/p/go-idn/idna2003/stringprep"
 	"os"
 	"strings"
 	//"fmt"
