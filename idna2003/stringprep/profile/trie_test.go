@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package stringprep
+package profile
 
 import (
 	"testing"
@@ -39,7 +39,7 @@ var rangeTests = []rangeTest{
 
 func TestLookupSparse(t *testing.T) {
 	for i, test := range rangeTests {
-		n := trie{sparse: test.table, sparseOffset: test.offsets, cutoff: 10}
+		n := Trie{sparse: test.table, sparseOffset: test.offsets, cutoff: 10}
 		v := n.lookupValue(test.block, test.lookup)
 		if v != test.result {
 			t.Errorf("LookupSparse:%d: found %X; want %X", i, v, test.result)

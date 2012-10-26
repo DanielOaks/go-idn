@@ -9,7 +9,7 @@ type valueRange struct {
 	lo, hi byte   // header: lo:n
 }
 
-type trie struct {
+type Trie struct {
 	index        []uint8
 	values       []uint16
 	sparse       []valueRange
@@ -21,7 +21,7 @@ type trie struct {
 // For n < t.cutoff, the block is a simple lookup table. Otherwise, the block
 // is a list of ranges with an accompanying value. Given a matching range r,
 // the value for b is by r.value + (b - r.lo) * stride.
-func (t *trie) lookupValue(n uint8, b byte) uint16 {
+func (t *Trie) lookupValue(n uint8, b byte) uint16 {
 	if n < t.cutoff {
 		return t.values[uint16(n)<<6+uint16(b)]
 	}
@@ -55,10 +55,10 @@ const (
 	te = 0xFE // 1111 1110
 )
 
-// lookup returns the trie value for the first UTF-8 encoding in s and
+// Lookup returns the trie value for the first UTF-8 encoding in s and
 // the width in bytes of this encoding. The size will be 0 if s does not
 // hold enough bytes to complete the encoding. len(s) must be greater than 0.
-func (t *trie) lookup(s []byte) (v uint16, sz int) {
+func (t *Trie) Lookup(s []byte) (v uint16, sz int) {
 	c0 := s[0]
 	switch {
 	case c0 < tx:
@@ -118,10 +118,10 @@ func (t *trie) lookup(s []byte) (v uint16, sz int) {
 	return 0, 1
 }
 
-// lookupString returns the trie value for the first UTF-8 encoding in s and
+// LookupString returns the trie value for the first UTF-8 encoding in s and
 // the width in bytes of this encoding. The size will be 0 if s does not
 // hold enough bytes to complete the encoding. len(s) must be greater than 0.
-func (t *trie) lookupString(s string) (v uint16, sz int) {
+func (t *Trie) LookupString(s string) (v uint16, sz int) {
 	c0 := s[0]
 	switch {
 	case c0 < tx:
@@ -183,7 +183,7 @@ func (t *trie) lookupString(s string) (v uint16, sz int) {
 
 // lookupUnsafe returns the trie value for the first UTF-8 encoding in s.
 // s must hold a full encoding.
-func (t *trie) lookupUnsafe(s []byte) uint16 {
+func (t *Trie) lookupUnsafe(s []byte) uint16 {
 	c0 := s[0]
 	if c0 < tx {
 		return t.values[c0]
@@ -208,7 +208,7 @@ func (t *trie) lookupUnsafe(s []byte) uint16 {
 
 // lookupStringUnsafe returns the trie value for the first UTF-8 encoding in s.
 // s must hold a full encoding.
-func (t *trie) lookupStringUnsafe(s string) uint16 {
+func (t *Trie) lookupStringUnsafe(s string) uint16 {
 	c0 := s[0]
 	if c0 < tx {
 		return t.values[c0]
