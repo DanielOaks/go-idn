@@ -1,3 +1,7 @@
+// Copyright 2012 Hannes Baldursson. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 package stringprep
 
 // An Iter iterates over a string or byte slice, while preparing it with a
