@@ -9,7 +9,7 @@ package stringprep
 
 import (
 	//"bytes"
-	"code.google.com/p/go-idn/idna/norm32"
+	"code.google.com/p/go-idn/idna2003/norm32"
 	"io"
 	"unicode/utf8"
 )
