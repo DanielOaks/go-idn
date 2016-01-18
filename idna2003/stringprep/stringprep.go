@@ -7,12 +7,7 @@
 // Package stringprep implements Stringprep as described in RFC 3454
 package stringprep
 
-import (
-	//"bytes"
-	"code.google.com/p/go-idn/idna2003/norm32"
-	"io"
-	"unicode/utf8"
-)
+import "golang.org/x/text/unicode/norm"
 
 // InvalidStringError represents an invalid string error in the input stream.
 type InvalidStringError struct {
@@ -42,7 +37,7 @@ type Profile struct {
 	// Defined by profile
 	CheckBidi bool
 
-	f          norm32.Form
+	f          norm.Form
 	mappings   Table
 	prohibited Table
 }
@@ -53,7 +48,7 @@ type Profile struct {
 // equal to p(out).
 func (p *Profile) Append(out []byte, src ...byte) []byte { return nil }
 
-// AppendString returns p(append(out, []byte(s))). The buffer out must be nil, 
+// AppendString returns p(append(out, []byte(s))). The buffer out must be nil,
 //empty, or equal to p(out).
 func (p *Profile) AppendString(out []byte, src string) []byte { return nil }
 

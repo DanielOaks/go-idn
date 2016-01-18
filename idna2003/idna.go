@@ -8,10 +8,11 @@
 package idna2003
 
 import (
-	"code.google.com/p/go-idn/idna2003/punycode"
-	"code.google.com/p/go-idn/idna2003/stringprep"
 	"os"
 	"strings"
+
+	"github.com/DanielOaks/go-idn/idna2003/punycode"
+	"github.com/DanielOaks/go-idn/idna2003/stringprep"
 	//"fmt"
 )
 
@@ -21,7 +22,7 @@ const (
 )
 
 // Converts a Unicode string to ASCII using the procedure in RFC 3490
-// section 4.1. Unassigned characters are not allowed and STD3 ASCII rules are 
+// section 4.1. Unassigned characters are not allowed and STD3 ASCII rules are
 // enforced. The input string may be a domain name containing dots.
 func ToASCII(label string) (string, error) {
 
@@ -58,7 +59,7 @@ func toASCIIRaw(label string) (string, error) {
 	// (0..7F) then proceed to step 2, otherwise skip to step 3.
 	for i := 0; i < len(label); i++ {
 		if label[i] > 127 {
-			// Step 2: Perform the smake teps specified in [NAMEPREP] and fail if there is an error. 
+			// Step 2: Perform the smake teps specified in [NAMEPREP] and fail if there is an error.
 			// The AllowUnassigned flag is used in [NAMEPREP].
 			label = stringprep.Nameprep(label)
 			break
@@ -76,7 +77,7 @@ func toASCIIRaw(label string) (string, error) {
 		return original, os.NewError("Contains hyphen at either end of the string")
 	}
 
-	// Step 4: If the sequence contains any code points outside the ASCII range 
+	// Step 4: If the sequence contains any code points outside the ASCII range
 	// (0..7F) then proceed to step 5, otherwise skip to step 8.
 
 	isASCII := true
@@ -171,7 +172,7 @@ func toUnicodeRaw(label string) (string, error) {
 	// 4. Remove the ACE prefix.
 	label = strings.SplitN(label, AcePrefix, -1)[1]
 
-	// 5. Decode the sequence using the decoding algorithm in [PUNYCODE] and fail if there is an error. 
+	// 5. Decode the sequence using the decoding algorithm in [PUNYCODE] and fail if there is an error.
 	//fmt.Printf(label+"\n")
 	results, err := punycode.ToUnicode(label)
 
@@ -186,7 +187,7 @@ func toUnicodeRaw(label string) (string, error) {
 		return original, os.NewError("Failed ToASCII on the decoded sequence: " + err.String())
 	}
 
-	// 7. Verify that the result of step 6 matches the saved copy from step 3, 
+	// 7. Verify that the result of step 6 matches the saved copy from step 3,
 	// 	  using a case-insensitive ASCII comparison.
 	if strings.ToLower(verification) == strings.ToLower(original) {
 		return results, nil
