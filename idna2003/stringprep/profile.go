@@ -6,19 +6,10 @@
 
 package stringprep
 
-type Profile struct {
-	normalize bool
-	checkBidi bool
-	key       Trie
-	val       []byte
-}
-
-func MkProfile(key Trie, val []byte, norm bool, bidi bool) *Profile {
-	return &Profile{key, val}
-}
-
-func (p *Profile) Value(r rune) string {
-
+type Profile []ProfileElement
+type ProfileElement struct {
+	Step  int // see Step const's
+	Table Table
 }
 
 const (
@@ -34,11 +25,3 @@ const (
 	Prohibited
 	Delete
 )
-
-func getType(u uint16) valueType {
-	return (u & typeMask) >> 14
-}
-
-func getVal(u uint16) uint16 {
-	return u & valueMask
-}

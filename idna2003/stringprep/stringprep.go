@@ -23,24 +23,19 @@ const (
 	MAX_MAP_CHARS = 4
 )
 
-// A Profile...
-//
-// For a Profile p, this documentation uses the notation p(x) to mean the bytes
-// or string x prepared with the given profile.
-type Profile struct {
-	// Defaults to true
-	Normalize bool
+// Steps in a stringprep profile.
+const (
+	NFKC                = 1
+	BIDI                = 2
+	MAP_TABLE           = 3
+	UNASSIGNED_TABLE    = 4
+	PROHIBIT_TABLE      = 5
+	BIDI_PROHIBIT_TABLE = 6
+	BIDI_RAL_TABLE      = 7
+	BIDI_L_TABLE        = 8
+)
 
-	// Defaults to false
-	AllowUnassigned bool
-
-	// Defined by profile
-	CheckBidi bool
-
-	f          norm.Form
-	mappings   Table
-	prohibited Table
-}
+type d [MAX_MAP_CHARS]rune
 
 /*
 
@@ -69,14 +64,15 @@ func (p *Profile) Writer(w io.Writer) io.WriteCloser { return nil }
 */
 // Prepare the input rune array according to the stringprep profile,
 // and return the results as a rune array.
-func StringprepRunes(input []rune, profile Profile) []int {
-	output := make([]int, len(input))
+func StringprepRunes(input []rune, profile Profile) []rune {
+	output := make([]rune, len(input))
 	copy(output[0:], input[0:])
 
 	for i := 0; i < len(profile); i++ {
 		switch profile[i].Step {
 		case NFKC:
-			output = normalization.NFKC(output)
+			// ew, so many conversions here
+			output = []rune(string(norm.NFKC.Bytes([]byte(string(output)))))
 			break
 		case BIDI:
 			done_prohibited := 0
