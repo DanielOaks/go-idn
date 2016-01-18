@@ -1,0 +1,1 @@
+Installing go-idn is fairly simple. Just run `goinstall go-idn.googlecode.com/hg/src/idna`
