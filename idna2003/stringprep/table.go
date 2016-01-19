@@ -46,7 +46,6 @@ func mapLen(input d) int {
 // Iterates over the input rune array and replaces runes with their maps
 func map_table(input []rune, table Table) []rune {
 	var output []rune
-	c := 0 // count
 
 	for i := 0; i < len(input); i++ {
 		// If rune is in table, replace it with its map
@@ -55,18 +54,16 @@ func map_table(input []rune, table Table) []rune {
 				if input[i] == table[k].Lo {
 					if table[k].Map[0] != 0 || table[k].Map[1] != 0 || table[k].Map[2] != 0 || table[k].Map[3] != 0 {
 						output = append(output, table[k].Map[0:mapLen(table[k].Map)]...)
-						c += mapLen(table[k].Map)
 					}
 					break
 				}
 			}
 		} else {
 			output = append(output, input[i])
-			c++
 		}
 
 	}
-	return output[0:c]
+	return output
 }
 
 // Tables defines the various unicode tables.
