@@ -1,13 +1,14 @@
 package stringprep
 
 var (
+	// Profiles is a map of the various stringprep profiles we implement.
 	Profiles = map[string]Profile{
-		"nameprep": Nameprep,
+		"nameprep": nameprepProfile,
 	}
 )
 
-// Nameprep - As descrirbed in RFC 3491: http://tools.ietf.org/html/rfc3491
-var Nameprep = Profile{
+// nameprepProfile - As descrirbed in RFC 3491: http://tools.ietf.org/html/rfc3491
+var nameprepProfile = Profile{
 	ProfileElement{MAP_TABLE, Tables["B1"]},
 	ProfileElement{MAP_TABLE, Tables["B2"]},
 	ProfileElement{NFKC, nil},
@@ -25,4 +26,13 @@ var Nameprep = Profile{
 	ProfileElement{BIDI_RAL_TABLE, Tables["D1"]},
 	ProfileElement{BIDI_L_TABLE, Tables["D2"]},
 	ProfileElement{UNASSIGNED_TABLE, Tables["A1"]},
+}
+
+// Nameprep performs the nameprep stringprep conversion on a string and returns it.
+func Nameprep(input string) (string, error) {
+	output, err := StringprepRunes([]rune(input), Profiles["nameprep"])
+	if err != nil {
+		return "", err
+	}
+	return string(output), nil
 }

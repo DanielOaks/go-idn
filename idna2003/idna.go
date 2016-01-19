@@ -60,7 +60,8 @@ func toASCIIRaw(label string) (string, error) {
 		if label[i] > 127 {
 			// Step 2: Perform the smake teps specified in [NAMEPREP] and fail if there is an error.
 			// The AllowUnassigned flag is used in [NAMEPREP].
-			label = stringprep.Nameprep(label)
+			// BUG(dan) we should check error value here
+			label, _ = stringprep.Nameprep(label)
 			break
 		}
 	}
@@ -158,7 +159,8 @@ func toUnicodeRaw(label string) (string, error) {
 	for i := 0; i < len(label); i++ {
 		if label[i] > 127 {
 			// Step 2: Perform the steps specified in [NAMEPREP] and fail if there is an error.
-			label = stringprep.Nameprep(label)
+			// BUG(dan) We should check error value here
+			label, _ = stringprep.Nameprep(label)
 			break
 		}
 	}
