@@ -11,7 +11,7 @@ type Table []TableElement
 // Returns true if the rune is in table
 func in_table(c rune, table Table) bool {
 	for i := 0; i < len(table); i++ {
-		if table[i].Lo <= c && c <= table[i].Hi {
+		if c == table[i].Lo || (table[i].Lo <= c && c <= table[i].Hi) {
 			return true
 		}
 	}
@@ -33,6 +33,16 @@ func filter(input []rune, table Table) []rune {
 	return output[0:]
 }
 
+// mapLen returns our length of a map.
+func mapLen(input d) int {
+	for i := len(input) - 1; 0 <= i; i-- {
+		if input[i] != 0 {
+			return i + 1
+		}
+	}
+	return 0
+}
+
 // Iterates over the input rune array and replaces runes with their maps
 func map_table(input []rune, table Table) []rune {
 	output := make([]rune, len(input))
@@ -43,8 +53,10 @@ func map_table(input []rune, table Table) []rune {
 		if in_table(input[i], table) {
 			for k := 0; k < len(table); k++ {
 				if input[i] == table[k].Lo {
-					copy(output[c:], table[k].Map[0:len(table[k].Map)])
-					c += len(table[k].Map)
+					if table[k].Map[0] != 0 || table[k].Map[1] != 0 || table[k].Map[2] != 0 || table[k].Map[3] != 0 {
+						copy(output[c:], table[k].Map[0:mapLen(table[k].Map)])
+						c += mapLen(table[k].Map)
+					}
 					break
 				}
 			}
@@ -54,7 +66,7 @@ func map_table(input []rune, table Table) []rune {
 		}
 
 	}
-	return output[0:]
+	return output[0:c]
 }
 
 // Tables defines the various unicode tables.

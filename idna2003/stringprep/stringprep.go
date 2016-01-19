@@ -7,7 +7,11 @@
 // Package stringprep implements Stringprep as described in RFC 3454
 package stringprep
 
-import "golang.org/x/text/unicode/norm"
+import (
+	"errors"
+
+	"golang.org/x/text/unicode/norm"
+)
 
 // InvalidStringError represents an invalid string error in the input stream.
 type InvalidStringError struct {
@@ -64,7 +68,7 @@ func (p *Profile) Writer(w io.Writer) io.WriteCloser { return nil }
 */
 // Prepare the input rune array according to the stringprep profile,
 // and return the results as a rune array.
-func StringprepRunes(input []rune, profile Profile) []rune {
+func StringprepRunes(input []rune, profile Profile) ([]rune, error) {
 	output := make([]rune, len(input))
 	copy(output[0:], input[0:])
 
@@ -81,13 +85,13 @@ func StringprepRunes(input []rune, profile Profile) []rune {
 			contains_ral := -1
 			contains_l := -1
 
-			for j := 0; i < len(profile); j++ {
+			for j := 0; j < len(profile); j++ {
 				switch profile[j].Step {
 				case BIDI_PROHIBIT_TABLE:
 					done_prohibited = 1
 					for k := 0; k < len(output); k++ {
 						if in_table(output[k], profile[j].Table) {
-							return nil
+							return nil, errors.New("stringprep: BIDI prohibited table")
 						}
 					}
 
@@ -110,15 +114,15 @@ func StringprepRunes(input []rune, profile Profile) []rune {
 			}
 
 			if done_prohibited != 1 || done_ral != 1 || done_l != 1 {
-				return nil // PROFILE ERROR
+				return nil, errors.New("stringprep: Profile error")
 			}
 
 			if contains_ral != -1 && contains_l != -1 {
-				return nil // BIDI BOTH L AND RAL
+				return nil, errors.New("stringprep: BIDI both L and RAL")
 			}
 
 			if contains_ral != -1 {
-				return nil // Error?
+				return nil, errors.New("stringprep: Error? (contains RAL)")
 			}
 
 			break
@@ -131,7 +135,13 @@ func StringprepRunes(input []rune, profile Profile) []rune {
 		case PROHIBIT_TABLE:
 			for k := 0; k < len(output); k++ {
 				if in_table(output[k], profile[i].Table) {
-					return nil
+					// character is prohibited so we remove it
+					if k == 0 {
+						output = output[1:]
+					} else {
+						output = append(output[:k], output[k+1:]...)
+					}
+					k--
 				}
 			}
 			break
@@ -142,9 +152,9 @@ func StringprepRunes(input []rune, profile Profile) []rune {
 		case BIDI_L_TABLE:
 			break
 		default:
-			return nil // PROFILE ERROR
+			return nil, errors.New("stringprep: Profile error")
 		}
 	}
 
-	return output
+	return output, nil
 }
