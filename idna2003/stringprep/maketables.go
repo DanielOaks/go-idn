@@ -157,7 +157,7 @@ func loadChars() {
 				//fmt.Printf(formatB, lo, hi , line)
 			} else if "C.1.1" == t || "C.1.2" == t {
 				fmt.Printf(formatA1, line[0:4], line[0:4], line)
-			} else if "C.2.1" == t || "C.2.2" == t || "C.3" == t || "C.4" == t || "C.5" == t || "C.6" == t || "C.7" == t || "C.8" == t || "D.1" == t || "D.2" == t {
+			} else if "C.2.1" == t || "C.2.2" == t || "C.3" == t || "C.4" == t || "C.5" == t || "C.6" == t || "C.7" == t || "C.8" == t || "C.9" == t || "D.1" == t || "D.2" == t {
 
 				subs := strings.Split(line, ";")
 

@@ -2773,6 +2773,8 @@ var _C8 = Table {
 
 
 var _C9 = Table { 
+	TableElement{ 0x0E0001, 0x0E0001, d{} }, 				 /* E0001; LANGUAGE TAG  */
+	TableElement{ 0x0E0020, 0x0E007F, d{} }, 				 /* E0020-E007F; [TAGGING CHARACTERS]  */
 }
 
 
