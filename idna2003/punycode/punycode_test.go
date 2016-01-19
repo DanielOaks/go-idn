@@ -25,8 +25,6 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
-	//   "os"
-	//      "bytes"
 	"unicode/utf8"
 )
 
@@ -99,15 +97,15 @@ func TestEncode(t *testing.T) {
 	for _, tt := range punyTests {
 
 		var out string
-		var err error = nil
+		var err error
 
 		// Encode the test case to an utf8 string
 		in := make([]byte, 0, 4*len(tt.unicode))
-		in_len := 0
+		inLen := 0
 		for i := 0; i < len(tt.unicode); i++ {
 			rune := tt.unicode[i]
 			str := make([]byte, utf8.RuneLen(rune))
-			in_len += utf8.EncodeRune(str, rune)
+			inLen += utf8.EncodeRune(str, rune)
 			in = append(in, str...)
 		}
 
@@ -129,16 +127,16 @@ func TestDecode(t *testing.T) {
 
 		// Encode the test case to an utf8 string
 		ut := make([]byte, 0, 4*len(tt.unicode))
-		ut_len := 0
+		utLen := 0
 		for i := 0; i < len(tt.unicode); i++ {
 			rune := tt.unicode[i]
 			str := make([]byte, utf8.RuneLen(rune))
-			ut_len += utf8.EncodeRune(str, rune)
+			utLen += utf8.EncodeRune(str, rune)
 			ut = append(ut, str...)
 		}
 
 		var out []byte
-		var err error = nil
+		var err error
 		out, err = Decode([]byte(tt.punycode))
 		if !reflect.DeepEqual(out, ut) {
 			if err == nil {

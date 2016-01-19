@@ -4,7 +4,7 @@
 //
 // This file is part of go-idn
 
-// Package punycode implements encoding and decoding of Punycode sequences. See RFC 3492. 
+// Package punycode implements encoding and decoding of Punycode sequences. See RFC 3492.
 // Punycode is used by the IDNA protocol for converting domain labels into ASCII; it is
 // not designed for any other purpose.
 // It is explicitly not designed for processing arbitrary free text.
@@ -23,7 +23,7 @@ const (
 	Skew             = 38
 	Damp             = 700
 	InitialBias      = 72
-	InitialN         = 128  // 0x80 
+	InitialN         = 128  // 0x80
 	Delimiter   byte = 0x2D // hyphen
 )
 
@@ -39,9 +39,9 @@ func EncodeString(s string) (string, error) {
 	return string(p), nil
 }
 
-// Encode returns the Punycode encoding of the UTF-8 string s. 
+// Encode returns the Punycode encoding of the UTF-8 string s.
 func Encode(b []byte) (p []byte, err error) {
-	// Encoding procedure explained in detail in RFC 3492. 
+	// Encoding procedure explained in detail in RFC 3492.
 	n := InitialN
 	delta := 0
 	bias := InitialBias
@@ -52,7 +52,7 @@ func Encode(b []byte) (p []byte, err error) {
 
 	basicRunes := 0
 	for i := 0; i < len(runes); i++ {
-		// Write all basic codepoints to result 
+		// Write all basic codepoints to result
 		if runes[i] < 0x80 {
 			_, err = result.WriteRune(runes[i])
 			if err != nil {
@@ -71,7 +71,7 @@ func Encode(b []byte) (p []byte, err error) {
 	}
 
 	for h := basicRunes; h < len(runes); {
-		var minRune rune = MaxRune
+		minRune := MaxRune
 
 		// Find the minimum rune >= n in the input
 		for i := 0; i < len(runes); i++ {
@@ -80,7 +80,7 @@ func Encode(b []byte) (p []byte, err error) {
 			}
 		}
 
-		delta = delta + (int(minRune)-n)*(h+1) // ?? 
+		delta = delta + (int(minRune)-n)*(h+1) // ??
 		n = int(minRune)
 
 		for i := 0; i < len(runes); i++ {
@@ -136,7 +136,7 @@ func DecodeString(s string) (string, error) {
 	return string(p), nil
 }
 
-// Decode returns the UTF-8 
+// Decode returns the UTF-8
 func Decode(b []byte) (p []byte, err error) {
 	// Decoding procedure explained in detail in RFC 3492.
 	n := InitialN
@@ -233,7 +233,7 @@ func adapt(delta int, first bool, numchars int) (bias int) {
 
 	delta = delta + (delta / numchars)
 
-	var k int = 0
+	k := 0
 	for delta > ((Base-TMin)*TMax)/2 {
 		delta = delta / (Base - TMin)
 		k = k + Base
@@ -243,8 +243,8 @@ func adapt(delta int, first bool, numchars int) (bias int) {
 }
 
 // codepoint2digit(cp) returns the numeric value of a basic rune
-// (for use in representing integers) in the range 0 to 
-// base-1, or base if cp does not represent a value.          
+// (for use in representing integers) in the range 0 to
+// base-1, or base if cp does not represent a value.
 func codepoint2digit(r rune) int {
 	switch {
 	case r-48 < 10:
