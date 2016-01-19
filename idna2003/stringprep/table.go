@@ -51,7 +51,7 @@ func map_table(input []rune, table Table) []rune {
 		// If rune is in table, replace it with its map
 		if in_table(input[i], table) {
 			for k := 0; k < len(table); k++ {
-				if input[i] == table[k].Lo {
+				if input[i] == table[k].Lo || (table[k].Lo <= input[i] && input[i] <= table[k].Hi) {
 					if table[k].Map[0] != 0 || table[k].Map[1] != 0 || table[k].Map[2] != 0 || table[k].Map[3] != 0 {
 						output = append(output, table[k].Map[0:mapLen(table[k].Map)]...)
 					}
