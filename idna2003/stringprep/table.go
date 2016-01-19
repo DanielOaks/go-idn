@@ -45,7 +45,7 @@ func mapLen(input d) int {
 
 // Iterates over the input rune array and replaces runes with their maps
 func map_table(input []rune, table Table) []rune {
-	output := make([]rune, len(input))
+	var output []rune
 	c := 0 // count
 
 	for i := 0; i < len(input); i++ {
@@ -54,14 +54,14 @@ func map_table(input []rune, table Table) []rune {
 			for k := 0; k < len(table); k++ {
 				if input[i] == table[k].Lo {
 					if table[k].Map[0] != 0 || table[k].Map[1] != 0 || table[k].Map[2] != 0 || table[k].Map[3] != 0 {
-						copy(output[c:], table[k].Map[0:mapLen(table[k].Map)])
+						output = append(output, table[k].Map[0:mapLen(table[k].Map)]...)
 						c += mapLen(table[k].Map)
 					}
 					break
 				}
 			}
 		} else {
-			output[c] = input[i]
+			output = append(output, input[i])
 			c++
 		}
 
