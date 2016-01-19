@@ -8,12 +8,11 @@
 package idna2003
 
 import (
-	"os"
+	"errors"
 	"strings"
 
 	"github.com/DanielOaks/go-idn/idna2003/punycode"
 	"github.com/DanielOaks/go-idn/idna2003/stringprep"
-	//"fmt"
 )
 
 // IDNA section 5
@@ -69,12 +68,12 @@ func toASCIIRaw(label string) (string, error) {
 	// Step 3: - Verify the absence of non-LDH ASCII code points
 	for _, c := range label {
 		if (c <= 0x2c) || (c >= 0x2e && c <= 0x2f) || (c >= 0x3a && c <= 0x40) || (c >= 0x5b && c <= 0x60) || (c >= 0x7b && c <= 0x7f) {
-			return original, os.NewError("Contains non-LDH ASCII codepoints")
+			return original, errors.New("Contains non-LDH ASCII codepoints")
 		}
 
 	}
 	if strings.HasPrefix(label, "-") || strings.HasSuffix(label, "-") {
-		return original, os.NewError("Contains hyphen at either end of the string")
+		return original, errors.New("Contains hyphen at either end of the string")
 	}
 
 	// Step 4: If the sequence contains any code points outside the ASCII range
@@ -93,13 +92,13 @@ func toASCIIRaw(label string) (string, error) {
 
 		// Step 5 Verify that the sequence does NOT begin with the ACE prefix.
 		if strings.HasPrefix(label, AcePrefix) {
-			return label, os.NewError("Label starts with ACE prefix")
+			return label, errors.New("Label starts with ACE prefix")
 		}
 
 		var err error
 
 		// Step 6: Encode with punycode
-		label, err = punycode.ToASCII(label)
+		label, err = punycode.EncodeString(label)
 		if err != nil {
 			return "", err // delegate err
 		}
@@ -112,7 +111,7 @@ func toASCIIRaw(label string) (string, error) {
 		return label, nil
 	}
 
-	return original, os.NewError("label empty or too long")
+	return original, errors.New("label empty or too long")
 }
 
 //
@@ -166,7 +165,7 @@ func toUnicodeRaw(label string) (string, error) {
 
 	// Step 3: Verify that the sequence begins with the ACE prefix, and save a copy of the sequence.
 	if !strings.HasPrefix(label, AcePrefix) {
-		return label, os.NewError("Label doesn't begin with the ACE prefix")
+		return label, errors.New("Label doesn't begin with the ACE prefix")
 	} // else
 
 	// 4. Remove the ACE prefix.
@@ -174,17 +173,17 @@ func toUnicodeRaw(label string) (string, error) {
 
 	// 5. Decode the sequence using the decoding algorithm in [PUNYCODE] and fail if there is an error.
 	//fmt.Printf(label+"\n")
-	results, err := punycode.ToUnicode(label)
+	results, err := punycode.DecodeString(label)
 
 	if err != nil {
-		return original, os.NewError("Failed punycode decoding: " + err.String())
+		return original, errors.New("Failed punycode decoding: " + err.Error())
 	}
 
 	// 6. Apply ToASCII.
 	verification, err := ToASCII(label)
 
 	if err != nil {
-		return original, os.NewError("Failed ToASCII on the decoded sequence: " + err.String())
+		return original, errors.New("Failed ToASCII on the decoded sequence: " + err.Error())
 	}
 
 	// 7. Verify that the result of step 6 matches the saved copy from step 3,
@@ -193,7 +192,7 @@ func toUnicodeRaw(label string) (string, error) {
 		return results, nil
 	}
 
-	return original, os.NewError("Failed verification step")
+	return original, errors.New("Failed verification step")
 }
 
 // Returns true if c is a label separator as defined by section 3.1 in RFC 3490
