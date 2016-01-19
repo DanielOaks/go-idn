@@ -30,7 +30,7 @@ var nameprepProfile = Profile{
 
 // Nameprep performs the nameprep stringprep conversion on a string and returns it.
 func Nameprep(input string) (string, error) {
-	output, err := StringprepRunes([]rune(input), Profiles["nameprep"])
+	output, err := PrepareRunes(Profiles["nameprep"], []rune(input))
 	if err != nil {
 		return "", err
 	}

@@ -13,20 +13,6 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// InvalidStringError represents an invalid string error in the input stream.
-type InvalidStringError struct {
-	// TODO: What should we report?
-}
-
-func (e InvalidStringError) Error() string {
-	panic("TODO")
-	return "Invalid string"
-}
-
-const (
-	MAX_MAP_CHARS = 4
-)
-
 // Steps in a stringprep profile.
 const (
 	NFKC                = 1
@@ -39,7 +25,10 @@ const (
 	BIDI_L_TABLE        = 8
 )
 
-type d [MAX_MAP_CHARS]rune
+// MaxMapChars is the largest number of runes/bytes a mapping will take up.
+const MaxMapChars = 4
+
+type d [MaxMapChars]rune
 
 /*
 
@@ -66,9 +55,10 @@ func (p *Profile) String(s string) string { return "" }
 // Write calls. Calling its Close method writes any buffered data to w.
 func (p *Profile) Writer(w io.Writer) io.WriteCloser { return nil }
 */
-// Prepare the input rune array according to the stringprep profile,
-// and return the results as a rune array.
-func StringprepRunes(input []rune, profile Profile) ([]rune, error) {
+
+// PrepareRunes prepares the input rune array according to the stringprep
+// profile, and returns the results as a rune array.
+func PrepareRunes(profile Profile, input []rune) ([]rune, error) {
 	output := make([]rune, len(input))
 	copy(output[0:], input[0:])
 
@@ -79,16 +69,16 @@ func StringprepRunes(input []rune, profile Profile) ([]rune, error) {
 			output = []rune(string(norm.NFKC.Bytes([]byte(string(output)))))
 			break
 		case BIDI:
-			done_prohibited := 0
-			done_ral := 0
-			done_l := 0
-			contains_ral := -1
-			contains_l := -1
+			doneProhibited := 0
+			doneRAL := 0
+			doneL := 0
+			containsRAL := -1
+			containsL := -1
 
 			for j := 0; j < len(profile); j++ {
 				switch profile[j].Step {
 				case BIDI_PROHIBIT_TABLE:
-					done_prohibited = 1
+					doneProhibited = 1
 					for k := 0; k < len(output); k++ {
 						if in_table(output[k], profile[j].Table) {
 							return nil, errors.New("stringprep: BIDI prohibited table")
@@ -96,32 +86,32 @@ func StringprepRunes(input []rune, profile Profile) ([]rune, error) {
 					}
 
 				case BIDI_RAL_TABLE:
-					done_ral = 1
+					doneRAL = 1
 					for k := 0; k < len(output); k++ {
 						if in_table(output[k], profile[j].Table) {
-							contains_ral = j
+							containsRAL = j
 						}
 					}
 
 				case BIDI_L_TABLE:
-					done_l = 1
+					doneL = 1
 					for k := 0; k < len(output); k++ {
 						if in_table(output[k], profile[j].Table) {
-							contains_l = j
+							containsL = j
 						}
 					}
 				}
 			}
 
-			if done_prohibited != 1 || done_ral != 1 || done_l != 1 {
+			if doneProhibited != 1 || doneRAL != 1 || doneL != 1 {
 				return nil, errors.New("stringprep: Profile error")
 			}
 
-			if contains_ral != -1 && contains_l != -1 {
+			if containsRAL != -1 && containsL != -1 {
 				return nil, errors.New("stringprep: BIDI both L and RAL")
 			}
 
-			if contains_ral != -1 {
+			if containsRAL != -1 {
 				return nil, errors.New("stringprep: Error? (contains RAL)")
 			}
 
@@ -135,13 +125,7 @@ func StringprepRunes(input []rune, profile Profile) ([]rune, error) {
 		case PROHIBIT_TABLE:
 			for k := 0; k < len(output); k++ {
 				if in_table(output[k], profile[i].Table) {
-					// character is prohibited so we remove it
-					if k == 0 {
-						output = output[1:]
-					} else {
-						output = append(output[:k], output[k+1:]...)
-					}
-					k--
+					return nil, errors.New("stringprep: Prohibited character, cannot casefold this")
 				}
 			}
 			break
