@@ -5,6 +5,8 @@
 // This file is part of go-idn
 
 // Package idna2003 implements IDNA as described in RFC 3490.
+//
+// This package is in beta and has not been extensively tested.
 package idna2003
 
 import (
