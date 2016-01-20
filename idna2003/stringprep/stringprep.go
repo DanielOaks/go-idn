@@ -120,8 +120,11 @@ func PrepareRunes(profile Profile, input []rune) ([]rune, error) {
 			output = map_table(output, profile[i].Table)
 			break
 		case UNASSIGNED_TABLE:
-			break
-			//switch profile[i].Table
+			for k := 0; k < len(output); k++ {
+				if in_table(output[k], profile[i].Table) {
+					return nil, errors.New("stringprep: Unassigned character in input runes")
+				}
+			}
 		case PROHIBIT_TABLE:
 			for k := 0; k < len(output); k++ {
 				if in_table(output[k], profile[i].Table) {
