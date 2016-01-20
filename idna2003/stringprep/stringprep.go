@@ -4,7 +4,8 @@
 
 // This file is part of go-idn
 
-// Package stringprep implements Stringprep as described in RFC 3454
+// Package stringprep implements Stringprep as described in RFC 3454,
+// including the Nameprep profile.
 //
 // This package is in beta and is still being written and tested.
 package stringprep
