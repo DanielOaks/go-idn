@@ -84,14 +84,6 @@ func TestInTable(t *testing.T) {
 	}
 }
 
-func TestNameprep(t *testing.T) {
-	input := []rune{0x0644, 0x064A, 0x0647, 0x0645, 0x0627, 0x0628, 0x062A, 0x0643, 0x0644, 0x0645, 0x0648, 0x0634, 0x0639, 0x0631, 0x0628, 0x064A, 0x061F}
-	_, err := PrepareRunes(Profiles["nameprep"], input)
-	if err == nil {
-		t.Error("stringprep: Incorrect rune array nameprep'd successfully, did not get any errors")
-	}
-}
-
 func TestMapping(t *testing.T) {
 	for i, test := range mappingTests {
 		output, err := PrepareRunes(Profiles[test.Mapping], test.Input)

@@ -74,6 +74,8 @@ func PrepareRunes(profile Profile, input []rune) ([]rune, error) {
 			doneL := 0
 			containsRAL := -1
 			containsL := -1
+			startswithRAL := 0
+			endswithRAL := 0
 
 			for j := 0; j < len(profile); j++ {
 				switch profile[j].Step {
@@ -90,6 +92,11 @@ func PrepareRunes(profile Profile, input []rune) ([]rune, error) {
 					for k := 0; k < len(output); k++ {
 						if in_table(output[k], profile[j].Table) {
 							containsRAL = j
+							if k == 0 {
+								startswithRAL = 1
+							} else if k == len(output)-1 {
+								endswithRAL = 1
+							}
 						}
 					}
 
@@ -111,8 +118,8 @@ func PrepareRunes(profile Profile, input []rune) ([]rune, error) {
 				return nil, errors.New("stringprep: BIDI both L and RAL")
 			}
 
-			if containsRAL != -1 {
-				return nil, errors.New("stringprep: Error? (contains RAL)")
+			if containsRAL != -1 && (startswithRAL+endswithRAL != 2) {
+				return nil, errors.New("stringprep: Contains RAL but does not start and end with RAL characters")
 			}
 
 			break
